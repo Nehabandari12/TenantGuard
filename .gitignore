@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.env
+# Cloned third-party repos used for study; see docs/DESIGN.md for licenses and what was reused.
+references/
+# Benchmark run artifacts: server logs, progress logs, unfinished and discarded runs
+results/**/server_*.log
+results/**/progress.log
+results/**/*.partial.json
+results/**/*.bak

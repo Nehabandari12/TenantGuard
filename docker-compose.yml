@@ -1,0 +1,34 @@
+# Postgres 17 + pgvector and Redis 8 (Redis 8 bundles the Query Engine that RedisVL needs).
+# Host ports are offset (55432 / 56379) so they do not collide with local installs.
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      # Bootstrap superuser: used ONLY by the init scripts below. The app never connects as it,
+      # because superusers bypass row-level security even with FORCE ROW LEVEL SECURITY.
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tenantguard
+    ports:
+      - "55432:5432"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d:ro
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tenantguard"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:8
+    ports:
+      - "56379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  pgdata:
