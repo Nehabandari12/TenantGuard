@@ -58,6 +58,9 @@ OLLAMA_URL = _env("OLLAMA_URL", "http://127.0.0.1:11434")
 # qwen3:4b in Ollama always reasons; think=true keeps that in a separate field instead of the answer.
 OLLAMA_THINK = _env("OLLAMA_THINK", "1") == "1"
 OLLAMA_NUM_CTX = int(_env("OLLAMA_NUM_CTX", "8192"))
+# Cap on generated tokens per call (reasoning included). Without it one runaway reasoning chain on CPU
+# can take many minutes per call, times up to LLM_MAX_TOOL_ROUNDS calls per agent request.
+OLLAMA_NUM_PREDICT = int(_env("OLLAMA_NUM_PREDICT", "2048"))
 OLLAMA_TIMEOUT_SECONDS = float(_env("OLLAMA_TIMEOUT_SECONDS", "600"))
 
 # Embeddings: "auto" uses fastembed bge-small-en-v1.5 if installed, else the hashing embedder.

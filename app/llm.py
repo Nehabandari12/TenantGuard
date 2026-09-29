@@ -89,7 +89,7 @@ class OllamaLLM:
             "model": config.LLM_MODEL,
             "stream": False,
             "think": config.OLLAMA_THINK,
-            "options": {"temperature": 0, "seed": 0, "num_ctx": config.OLLAMA_NUM_CTX},
+            "options": {"temperature": 0, "seed": 0, "num_ctx": config.OLLAMA_NUM_CTX, "num_predict": config.OLLAMA_NUM_PREDICT},
             "messages": [{"role": "system", "content": system}, *self._to_ollama(messages)],
         }
         if tools:
