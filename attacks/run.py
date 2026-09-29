@@ -116,7 +116,9 @@ class State:
 
 _tokens: dict[str, str] = {}
 # A local model on CPU can take minutes for a multi-round agent request.
-STEP_TIMEOUT = 120 if config.LLM_PROVIDER == "mock" else 1800
+# Longer than the app itself can take (every tool round hitting the LLM timeout), so the harness
+# never gives up on a request the app would still have finished.
+STEP_TIMEOUT = 120 if config.LLM_PROVIDER == "mock" else config.LLM_MAX_TOOL_ROUNDS * config.OLLAMA_TIMEOUT_SECONDS + 300
 
 
 _issued: dict[str, float] = {}
@@ -171,9 +173,16 @@ def run_setup_step(step: dict, r: redis.Redis) -> str:
     return text
 
 
+class StepError(RuntimeError):
+    """A scored step failed on the server side, so it observed nothing either way."""
+
+
 def run_step(step: dict, who: str, r: redis.Redis) -> tuple[list[dict], str]:
-    """Returns (trace events, raw response text). Denials (401/403) are valid outcomes here."""
-    events, text, _ = _run(step, who, r)
+    """Returns (trace events, raw response text). Denials (401/403) are valid outcomes here;
+    server errors (5xx) are not, because a crashed request would otherwise score as 'no leak'."""
+    events, text, status = _run(step, who, r)
+    if status >= 500:
+        raise StepError(f"HTTP {status}: {text[:200]}")
     return events, text
 
 
@@ -239,8 +248,10 @@ def main() -> None:
             print(f"{label}: already complete, skipping")
             return
         if partial_path.exists():
-            records = json.loads(partial_path.read_text(encoding="utf-8"))
-            print(f"{label}: resuming after {len(records)} finished checks")
+            saved = json.loads(partial_path.read_text(encoding="utf-8"))
+            records = [r for r in saved if not r.get("error")]  # errored checks get another try
+            print(f"{label}: resuming after {len(records)} finished checks "
+                  f"({len(saved) - len(records)} errored, retrying)", flush=True)
     done = {(r["id"], r["repeat"]) for r in records}
 
     state = State()
@@ -261,9 +272,15 @@ def main() -> None:
                     text = run_setup_step(step, state.redis)
                     foreign_outputs.append((step["as"].split("/")[0], _answer_of(text)))
                 mark = state.watermark()
-                events, texts = [], []
+                events, texts, error = [], [], None
                 for step in case["steps"]:
-                    evs, text = run_step(step, case["as"], state.redis)
+                    try:
+                        evs, text = run_step(step, case["as"], state.redis)
+                    except (httpx.TimeoutException, StepError) as exc:
+                        # Not a pass: nothing was observed. Recorded as an error and shown in the summary.
+                        error = f"timeout after {STEP_TIMEOUT}s" if isinstance(exc, httpx.TimeoutException) else str(exc)
+                        texts.append(f"error: {error}")
+                        break
                     events.extend(evs)
                     texts.append(text)
                 new_logs, new_notes = state.new_rows(mark)
@@ -276,20 +293,22 @@ def main() -> None:
                     "channels": sorted({l.channel for l in leaks}),
                     "leaks": [asdict(l) for l in leaks],
                     "response": texts[-1][:2000],
+                    "error": error,
                 })
                 partial_path.write_text(json.dumps(records, indent=2), encoding="utf-8")
-                mark_str = "LEAK" if leaks else "ok"
+                mark_str = "LEAK" if leaks else ("ERR" if error else "ok")
                 print(f"{label} {case['id']:13} rep{rep} {mark_str:4} {','.join(sorted({l.channel for l in leaks}))}", flush=True)
     finally:
         stop(procs)
 
-    summary = defaultdict(lambda: {"runs": 0, "leak_answer": 0, "leak_any": 0})
+    summary = defaultdict(lambda: {"runs": 0, "leak_answer": 0, "leak_any": 0, "errors": 0})
     for rec in records:
         for key in (rec["route"], "ALL"):
             s = summary[key]
             s["runs"] += 1
             s["leak_answer"] += rec["leak_answer"]
             s["leak_any"] += rec["leak_any"]
+            s["errors"] += bool(rec.get("error"))
     health = {"mode": args.mode, "llm": config.LLM_PROVIDER, "llm_model": config.LLM_MODEL if config.LLM_PROVIDER != "mock" else None,
               "egress_canary": not args.no_egress_canary, "repeats": repeats}
     out = {"meta": health, "summary": summary, "records": records}
@@ -297,7 +316,8 @@ def main() -> None:
     partial_path.unlink(missing_ok=True)
     print(f"\n{label}: route      answers-only   all-channels")
     for route, s in summary.items():
-        print(f"{label}: {route:10} {s['leak_answer'] / s['runs']:>10.0%} {s['leak_any'] / s['runs']:>14.0%}   (n={s['runs']})")
+        errs = f", {s['errors']} error(s)" if s["errors"] else ""
+        print(f"{label}: {route:10} {s['leak_answer'] / s['runs']:>10.0%} {s['leak_any'] / s['runs']:>14.0%}   (n={s['runs']}{errs})")
 
 
 if __name__ == "__main__":

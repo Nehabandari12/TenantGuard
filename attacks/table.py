@@ -34,6 +34,10 @@ def main() -> None:
                 s = run["summary"].get(route)
                 cells.append(f"{pct(s['leak_answer'], s['runs'])} / {pct(s['leak_any'], s['runs'])}" if s else "-")
             lines.append(f"| {'**all**' if route == 'ALL' else route} | {owasp} | " + " | ".join(cells) + " |")
+        errored = {LABELS[l]: r["summary"]["ALL"].get("errors", 0) for l, r in runs.items() if r["summary"]["ALL"].get("errors")}
+        if errored:
+            lines += ["", "Checks that errored (timed out; counted as runs but not as leaks, so they could hide one): "
+                      + ", ".join(f"{k}: {v}" for k, v in errored.items()) + "."]
         b2 = runs.get("B2", {}).get("summary", {}).get("ALL")
         if b2:
             hidden = b2["leak_any"] - b2["leak_answer"]

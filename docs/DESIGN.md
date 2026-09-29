@@ -116,6 +116,7 @@ broken ingest would produce a 0% that looks like perfect isolation.
 | Login tokens (1 h) expired during a B0 run of over an hour. Setup requests got 401 and wrote no logs, so three log checks scored "no leak" | B0 logs at 0% on Qwen vs 100% on the mock | Tokens are refreshed after 30 min, and a setup step that doesn't return 200 raises `SetupFailed` instead of being scored |
 | The log viewer returned other tenants' rows with no canary in them | B0 logs after the token fix | Rows tagged with another tenant count as a leak |
 | Long runs died with the terminal session, and a reboot also stopped Docker | First Qwen run, 9 checks into B0 | Runs save after every check and take `--resume`. `attacks/bench.py` runs every step, skips finished ones and logs to a file, so it can run detached |
+| One B3 agent request ran past the harness's 30-minute timeout (unbounded reasoning, up to 6 model calls), and the run crashed | B3 `injection-02` on Qwen | `OLLAMA_NUM_PREDICT=2048` caps each call; calls under the cap are unchanged at temperature 0 with a fixed seed. The step timeout is now derived from rounds × LLM timeout, so it outlasts anything the app can take. A scored step that times out or returns 5xx is recorded as an *error*, shown in the summary and table, and retried on resume. It is never scored as a pass |
 
 The expired-token bug is the instructive one: a harness failure that produced exactly the number you want
 to see. Setup failures now stop the run.
