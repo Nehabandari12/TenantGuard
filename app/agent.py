@@ -90,14 +90,16 @@ async def run(principal: Principal, tenant_name: str, message: str, login_token:
             results = []
             for call in reply.tool_calls:
                 calls_made.append(call.name)
-                tracing.record("tool_call", {"name": call.name, "args": call.input}, tool=call.name)
                 if config.GUARDS.egress and egress is not None:
                     verdict = egress.check_tool_args(call.input, principal)
                     if verdict.blocked:
+                        # Traced on its own channel: the call never left, so it must not score as a leak.
+                        tracing.record("tool_call_blocked", {"name": call.name, "args": call.input}, tool=call.name)
                         tracing.record("egress_block", {"tool": call.name, "findings": [f.__dict__ for f in verdict.findings]})
                         results.append({"type": "tool_result", "tool_use_id": call.id, "is_error": True,
                                         "content": "Blocked by TenantGuard egress policy."})
                         continue
+                tracing.record("tool_call", {"name": call.name, "args": call.input}, tool=call.name)
                 result = await client.call_tool(call.name, call.input)
                 text = _result_text(result)
                 tracing.record("tool_response", text, tool=call.name, is_error=bool(result.is_error))
