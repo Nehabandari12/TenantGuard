@@ -9,7 +9,7 @@ LLM app, plus a benchmark that measures it. The same app runs in four modes agai
 |---|---|
 | B0 | nothing |
 | B1 | a `WHERE tenant_id = …` filter in app code (the usual tutorial fix) |
-| B2 | B1 + an input prompt-injection firewall |
+| B2 | B1 + an input prompt-injection firewall: a keyword filter, or Llama Prompt Guard 2 |
 | B3 | **TenantGuard**: verified identity, FORCE RLS, tenant-scoped cache and memory, audience-bound MCP tokens, outbound checks |
 
 A leak is a canary (e.g. `GLBX-4A1F0C`) showing up where its owner tenant can't see it. The detector checks
@@ -26,19 +26,19 @@ first 23, before the suite grew. No check errored or timed out in any run. Full 
 
 **Mock model (worst-case obedient), 78 checks**
 
-| Route | OWASP | B0 | B1 | B2 | B3 | B3, egress canary check off |
-|---|---|---|---|---|---|---|
-| search | LLM08 | 100% / 100% | 31% / 31% | 31% / 31% | 0% / 0% | 0% / 0% |
-| cache | LLM08 | 100% / 100% | 100% / 100% | 100% / 100% | 0% / 0% | 0% / 0% |
-| memory | ASI06 | 92% / 100% | 62% / 77% | 62% / 77% | 0% / 0% | 0% / 0% |
-| tools | ASI02/ASI03 | 85% / 100% | 54% / 69% | 54% / 69% | 0% / 0% | 0% / 0% |
-| injection | LLM01/ASI01 | 38% / 100% | 38% / 69% | 38% / 69% | 0% / 0% | 0% / 0% |
-| logs | LLM02 | 100% / 100% | 62% / 62% | 62% / 62% | 0% / 0% | 0% / 0% |
-| **all** | | 86% / 100% | 58% / 68% | 58% / 68% | **0% / 0%** | **0% / 0%** |
+| Route | OWASP | B0 | B1 | B2, keyword filter | B2, Prompt Guard 2 | B3 | B3, egress canary check off |
+|---|---|---|---|---|---|---|---|
+| search | LLM08 | 100% / 100% | 31% / 31% | 31% / 31% | 31% / 31% | 0% / 0% | 0% / 0% |
+| cache | LLM08 | 100% / 100% | 100% / 100% | 100% / 100% | 100% / 100% | 0% / 0% | 0% / 0% |
+| memory | ASI06 | 92% / 100% | 62% / 77% | 62% / 77% | 62% / 77% | 0% / 0% | 0% / 0% |
+| tools | ASI02/ASI03 | 85% / 100% | 54% / 69% | 54% / 69% | 54% / 69% | 0% / 0% | 0% / 0% |
+| injection | LLM01/ASI01 | 38% / 100% | 38% / 69% | 38% / 69% | 38% / 69% | 0% / 0% | 0% / 0% |
+| logs | LLM02 | 100% / 100% | 62% / 62% | 62% / 62% | 62% / 62% | 0% / 0% | 0% / 0% |
+| **all** | | 86% / 100% | 58% / 68% | 58% / 68% | 58% / 68% | **0% / 0%** | **0% / 0%** |
 
 **Qwen3 4B, first 23 checks (3-5 per route)**
 
-| Route | OWASP | B0 | B1 | B2 | B3 | B3, egress canary check off |
+| Route | OWASP | B0 | B1 | B2, keyword filter | B3 | B3, egress canary check off |
 |---|---|---|---|---|---|---|
 | search | LLM08 | 0% / 100% | 0% / 20% | 0% / 20% | 0% / 0% | 0% / 0% |
 | cache | LLM08 | 100% / 100% | 100% / 100% | 100% / 100% | 0% / 0% | 0% / 0% |
@@ -57,7 +57,12 @@ What the runs show:
 - **The tutorial fix (B1) still leaks in 68% of the 78 checks** (mock; 57% of the first 23 on Qwen), through
   the semantic cache, memory keyed by usernames that repeat across companies, tools that trust a
   model-supplied `tenant_id`, the tenant-switch header and the log viewer's `?tenant=` parameter. It does
-  stop plain ID guessing and unauthenticated tool calls. The input firewall (B2) changed nothing.
+  stop plain ID guessing and unauthenticated tool calls.
+- **Input firewalls don't see these attacks.** Neither B2 firewall changed a single result. Llama Prompt
+  Guard 2 86M scores an obvious "ignore your previous instructions" at 0.999, yet flagged none of the 278
+  inputs the benchmark sends (highest score 0.18). The cross-tenant requests read like ordinary ones ("show
+  me ticket T-1005", a header, a `?tenant=` parameter), and planted instructions arrive in tool results,
+  which an input firewall never looks at.
 - **A real model hides leaks from answer-only audits.** Qwen rephrases instead of repeating reference codes.
   In B0 its search answers looked clean (0%) while every one of them had pulled other companies' documents
   into context (100%). On the same 23 checks, 35% of B0 checks leak somewhere other than the answer, against
@@ -115,6 +120,12 @@ Each step picks up where its saved results end: after a crash or reboot, or afte
 `attacks/cases.yaml`, you just run it again and only the missing checks run. Progress is in `results/<model>/progress.log`. Individual steps:
 `python -m attacks.run --mode B1`, `python -m eval.run_eval --mode B3 --per-tenant 5`, `python -m attacks.table`.
 
+**B2 with Llama Prompt Guard 2.** Request access to
+[meta-llama/Llama-Prompt-Guard-2-86M](https://huggingface.co/meta-llama/Llama-Prompt-Guard-2-86M) and log in
+with `hf auth login`, then `uv pip install --python .venv -e ".[firewall]"`. `python -m attacks.bench --promptguard`
+adds the B2 run with it, and `TG_FIREWALL=promptguard python -m baselines.firewall` scores every input the
+benchmark sends.
+
 **LLM choice.** The default is local Ollama `qwen3:4b` at temperature 0 with a fixed seed. Nothing is sent to
 a paid API, and there is no fallback between providers: if Ollama is down, the app refuses to start.
 Settings are in [.env.example](.env.example).
@@ -143,9 +154,9 @@ per check by default; pass `--repeats 3` to measure run-to-run variation.
   questions per mode instead of 60.
 - Qwen has run the first 23 of the 78 checks. `python -m attacks.bench` with Ollama runs the other 55 and
   keeps the 23 already done. There are no encoded or translated variants of the inputs yet. The detector and egress *do* decode base64/hex/URL/reversed/split output.
-- B2 used the keyword-heuristic fallback because LlamaFirewall was not installed (it needs gated Hugging
-  Face access to Llama Prompt Guard 2). The input firewall caught none of these checks, because none rely
-  on jailbreak phrasing and it never sees retrieved tickets.
+- B2 with Prompt Guard 2 ran on the mock only. It flags none of the inputs, so on Qwen it would take exactly
+  the path the keyword-filter B2 took. The model runs directly through transformers; the llamafirewall
+  package, which wraps it, also pulls in scanners B2 doesn't use.
 - B3 scoring 0% even with the egress canary check off shows the protection comes from the access layer.
   Egress still matters for the injection route: link stripping is what stops a tenant's own data from
   leaving through a URL.
