@@ -187,4 +187,12 @@ attribution, but it wasn't needed. From the unlicensed ones only the ideas were 
 - B2 ran on the keyword heuristic, because LlamaFirewall needs gated access to Llama Prompt Guard 2.
 - Answer quality is a string match on the expected fact, not an LLM judge.
 - Qwen runs with `--repeats 3` to measure run-to-run variation.
-- A reviewer agent that approves each tool call.
+
+## Decided against
+
+**A reviewer agent that approves each tool call.** It was the first item on the plan's cut list, and the
+results say it would change no number here. In B3 every tool call a planted instruction asked for either
+targeted another tenant's ticket and got "not found or not accessible" from the access layer, or carried a
+link that egress removed (all 13 injection checks on the mock). A reviewer would stop those calls one step
+earlier. What it would add is protection *inside* one tenant (an injected note on the tenant's own ticket),
+which is outside this threat model, and an LLM reviewer can itself be talked round by the same planted text.
