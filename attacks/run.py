@@ -49,7 +49,10 @@ def spawn(mode: str, egress_canary: bool) -> list[subprocess.Popen]:
     RESULTS.mkdir(parents=True, exist_ok=True)
     procs = []
     for module, port in (("mcp_server.server:app", 8001), ("app.main:app", 8000)):
-        log = open(RESULTS / f"server_{mode}_{port}.log", "w")
+        # Append, so a restart after a crash keeps the crashed server's output.
+        log = open(RESULTS / f"server_{mode}_{port}.log", "a")
+        log.write(f"==== start {time.strftime('%Y-%m-%d %H:%M:%S')} ====\n")
+        log.flush()
         procs.append(subprocess.Popen([sys.executable, "-m", "uvicorn", module, "--port", str(port)],
                                       cwd=ROOT, env=env, stdout=log, stderr=subprocess.STDOUT))
     deadline = time.time() + 120
@@ -227,6 +230,49 @@ def _answer_of(text: str) -> str:
         return ""
 
 
+# Transport failures that mean a server process died (not a timeout, which is handled per step).
+SERVER_DOWN = (httpx.ConnectError, httpx.ReadError, httpx.WriteError, httpx.RemoteProtocolError)
+
+
+def error_record(case: dict, rep: int, error: str) -> dict:
+    return {"id": case["id"], "route": case["route"], "owasp": case["owasp"], "repeat": rep,
+            "leak_answer": False, "leak_any": False, "channels": [], "leaks": [],
+            "response": f"error: {error}", "error": error}
+
+
+def run_check(case: dict, rep: int, state: "State", registry: Registry) -> dict:
+    """Reset, run setup as the other users, run the scored steps, detect. Raises SERVER_DOWN."""
+    state.reset()
+    foreign_outputs = []
+    for step in case.get("setup", []):
+        text = run_setup_step(step, state.redis)
+        foreign_outputs.append((step["as"].split("/")[0], _answer_of(text)))
+    mark = state.watermark()
+    events, texts, error = [], [], None
+    for step in case["steps"]:
+        try:
+            evs, text = run_step(step, case["as"], state.redis)
+        except (httpx.TimeoutException, StepError) as exc:
+            # Not a pass: nothing was observed. Recorded as an error and shown in the summary.
+            error = f"timeout after {STEP_TIMEOUT}s" if isinstance(exc, httpx.TimeoutException) else str(exc)
+            texts.append(f"error: {error}")
+            break
+        events.extend(evs)
+        texts.append(text)
+    new_logs, new_notes = state.new_rows(mark)
+    session_tenant = case["as"].split("/")[0]
+    leaks = detect(registry, session_tenant, events, new_logs, new_notes, foreign_outputs)
+    return {
+        "id": case["id"], "route": case["route"], "owasp": case["owasp"], "repeat": rep,
+        "leak_answer": any(l.channel == "final_output" for l in leaks),
+        "leak_any": bool(leaks),
+        "channels": sorted({l.channel for l in leaks}),
+        "leaks": [asdict(l) for l in leaks],
+        "response": texts[-1][:2000],
+        "error": error,
+    }
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", required=True, choices=[m.value for m in config.Mode])
@@ -266,38 +312,25 @@ def main() -> None:
             for rep in range(repeats):
                 if (case["id"], rep) in done:
                     continue
-                state.reset()
-                foreign_outputs = []
-                for step in case.get("setup", []):
-                    text = run_setup_step(step, state.redis)
-                    foreign_outputs.append((step["as"].split("/")[0], _answer_of(text)))
-                mark = state.watermark()
-                events, texts, error = [], [], None
-                for step in case["steps"]:
+                for attempt in (1, 2):
                     try:
-                        evs, text = run_step(step, case["as"], state.redis)
-                    except (httpx.TimeoutException, StepError) as exc:
-                        # Not a pass: nothing was observed. Recorded as an error and shown in the summary.
-                        error = f"timeout after {STEP_TIMEOUT}s" if isinstance(exc, httpx.TimeoutException) else str(exc)
-                        texts.append(f"error: {error}")
+                        rec = run_check(case, rep, state, registry)
                         break
-                    events.extend(evs)
-                    texts.append(text)
-                new_logs, new_notes = state.new_rows(mark)
-                session_tenant = case["as"].split("/")[0]
-                leaks = detect(registry, session_tenant, events, new_logs, new_notes, foreign_outputs)
-                records.append({
-                    "id": case["id"], "route": case["route"], "owasp": case["owasp"], "repeat": rep,
-                    "leak_answer": any(l.channel == "final_output" for l in leaks),
-                    "leak_any": bool(leaks),
-                    "channels": sorted({l.channel for l in leaks}),
-                    "leaks": [asdict(l) for l in leaks],
-                    "response": texts[-1][:2000],
-                    "error": error,
-                })
+                    except SERVER_DOWN as exc:
+                        # The app or MCP server died mid-check (on a memory-starved machine, a native
+                        # crash). Restart both and re-run the whole check once from a clean reset.
+                        if args.no_spawn or attempt == 2:
+                            rec = error_record(case, rep, f"server connection lost ({type(exc).__name__}), attempt {attempt}")
+                            break
+                        print(f"{label} {case['id']}: server connection lost ({type(exc).__name__}); "
+                              "restarting services and retrying the check", flush=True)
+                        stop(procs)
+                        procs[:] = spawn(args.mode, not args.no_egress_canary)
+                records.append(rec)
                 partial_path.write_text(json.dumps(records, indent=2), encoding="utf-8")
-                mark_str = "LEAK" if leaks else ("ERR" if error else "ok")
-                print(f"{label} {case['id']:13} rep{rep} {mark_str:4} {','.join(sorted({l.channel for l in leaks}))}", flush=True)
+                channels = ",".join(rec["channels"])
+                mark_str = "LEAK" if rec["leak_any"] else ("ERR" if rec["error"] else "ok")
+                print(f"{label} {case['id']:13} rep{rep} {mark_str:4} {channels}", flush=True)
     finally:
         stop(procs)
 

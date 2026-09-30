@@ -23,7 +23,7 @@ import httpx
 
 from app import config
 from app.seed import TENANTS, build
-from attacks.run import RESULTS, STEP_TIMEOUT, State, spawn, stop, token
+from attacks.run import RESULTS, SERVER_DOWN, STEP_TIMEOUT, State, spawn, stop, token
 from tenantguard.db import set_rls
 from tenantguard.tracing import read as read_trace
 
@@ -61,9 +61,20 @@ def main() -> None:
                 if q + "|" + tenant in done:
                     continue
                 state.reset()
-                t0 = time.perf_counter()
-                resp = httpx.post(config.APP_URL + "/ask", json={"question": q},
-                                  headers={"Authorization": f"Bearer {token(f'{tenant}/alice')}"}, timeout=STEP_TIMEOUT)
+                for attempt in (1, 2):
+                    t0 = time.perf_counter()
+                    try:
+                        resp = httpx.post(config.APP_URL + "/ask", json={"question": q},
+                                          headers={"Authorization": f"Bearer {token(f'{tenant}/alice')}"}, timeout=STEP_TIMEOUT)
+                        break
+                    except SERVER_DOWN:
+                        # A server died mid-request: restart once and ask again; a second failure stops the
+                        # run (resume continues from the saved rows).
+                        if args.no_spawn or attempt == 2:
+                            raise
+                        print(f"eval {args.mode}: server connection lost; restarting services", flush=True)
+                        stop(procs)
+                        procs[:] = spawn(args.mode, True)
                 ms = (time.perf_counter() - t0) * 1000
                 body = resp.json()
                 usage = next((json.loads(e["content"]) for e in read_trace(state.redis, body.get("request_id", ""))
