@@ -39,6 +39,12 @@ refuses, or doesn't answer."""
 _VERDICT = re.compile(r"\b(INCORRECT|CORRECT)\b")
 
 
+def verdict(reply: str) -> str:
+    """The first CORRECT or INCORRECT in the reply."""
+    m = _VERDICT.search(reply.upper())
+    return m.group(1).lower() if m else "unparsed"
+
+
 def grade(http: httpx.Client, model: str, row: dict) -> tuple[str, str]:
     prompt = PROMPT.format(company=COMPANY[row["tenant"]], question=row["question"], value=row["value"],
                            answer=row["answer"] or "(empty)")
@@ -49,8 +55,7 @@ def grade(http: httpx.Client, model: str, row: dict) -> tuple[str, str]:
     })
     r.raise_for_status()
     text = re.sub(r"<think>.*?</think>", "", r.json()["message"].get("content") or "", flags=re.S).strip()
-    m = _VERDICT.search(text.upper())
-    return (m.group(1).lower() if m else "unparsed"), text[:200]
+    return verdict(text), text[:200]
 
 
 def main() -> None:

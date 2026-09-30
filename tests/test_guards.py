@@ -1,6 +1,7 @@
 """Unit tests for the TenantGuard layers that don't need Docker."""
 
 import asyncio
+import re
 import base64
 
 import jwt
@@ -164,3 +165,25 @@ def test_note_on_another_tenants_ticket_is_a_leak_without_a_canary():
     note = {"tenant_id": "globex", "ticket_tenant": "globex", "body": "please call the customer back"}
     assert detect(_registry(), "acme", [], [], [note]) == [Leak("cross_tenant_write", "provenance:note", "acme", "globex")]
     assert detect(_registry(), "globex", [], [], [note]) == []
+
+
+# ---- eval -----------------------------------------------------------------------------------
+
+def test_judge_verdict_parsing():
+    from eval.judge import verdict
+    assert verdict("CORRECT") == "correct"
+    assert verdict("incorrect.") == "incorrect"
+    assert verdict("The reply is INCORRECT") == "incorrect"
+    assert verdict("maybe") == "unparsed"
+
+
+def test_agent_tasks_use_only_plain_tickets_of_the_same_tenant():
+    from app.seed import build
+    from eval.run_eval import AGENT_TICKETS, agent_task_list
+    data = build()
+    tasks = agent_task_list(data["docs"], data["tickets"], 3)
+    assert len(tasks) == 3 * 3 * 3
+    owner = {t["id"]: t["tenant_id"] for t in data["tickets"]}
+    for task in tasks:
+        for tid in re.findall(r"T-\d{4}", task["question"]):
+            assert owner[tid] == task["tenant"] and int(tid[2:]) % 1000 in AGENT_TICKETS
