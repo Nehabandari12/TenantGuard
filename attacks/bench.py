@@ -3,8 +3,9 @@
     python -m attacks.bench [--eval-per-tenant 5]
 
 Steps: attack runs B0-B3, B3 without the egress canary check, utility eval B0-B3, results table.
-Each step is skipped when its result file exists, and interrupted runs continue from their
-partial file, so the command can simply be re-run after a crash or reboot. Progress goes to
+Each attack step runs only the checks its saved results don't have yet: an interrupted run continues
+from its partial file, and a finished one gets just the checks added to the case file since. Eval steps
+are skipped once finished. So the command can simply be re-run after a crash, a reboot or new checks. Progress goes to
 results/<model>/progress.log (the process writes it itself, so it can run detached).
 """
 

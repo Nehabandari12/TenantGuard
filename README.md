@@ -104,8 +104,8 @@ uv venv --python 3.12 .venv && uv pip install --python .venv -e ".[embed,pii,dev
 ```
 
 `attacks.bench` runs B0-B3, B3 without the egress canary check, the utility eval and the results table.
-Each step skips if it has already finished and otherwise resumes from its last saved check, so after a crash
-or reboot you just run it again. Progress is in `results/<model>/progress.log`. Individual steps:
+Each step picks up where its saved results end: after a crash or reboot, or after new checks are added to
+`attacks/cases.yaml`, you just run it again and only the missing checks run. Progress is in `results/<model>/progress.log`. Individual steps:
 `python -m attacks.run --mode B1`, `python -m eval.run_eval --mode B3 --per-tenant 5`, `python -m attacks.table`.
 
 **LLM choice.** The default is local Ollama `qwen3:4b` at temperature 0 with a fixed seed. Nothing is sent to

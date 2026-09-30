@@ -280,30 +280,38 @@ def main() -> None:
     ap.add_argument("--cases", default=str(ROOT / "attacks" / "cases.yaml"))
     ap.add_argument("--no-egress-canary", action="store_true")
     ap.add_argument("--no-spawn", action="store_true")
-    ap.add_argument("--resume", action="store_true", help="skip if finished; otherwise continue from the partial file")
+    ap.add_argument("--resume", action="store_true",
+                    help="run only the checks missing from the saved results (partial or finished)")
     args = ap.parse_args()
     # mock and ollama (temperature 0, fixed seed) are deterministic, so one repeat is enough.
     repeats = args.repeats or (1 if config.LLM_PROVIDER in ("mock", "ollama") else 3)
     label = args.mode + ("_nocanary" if args.no_egress_canary else "")
     RESULTS.mkdir(parents=True, exist_ok=True)
     final_path, partial_path = RESULTS / f"{label}.json", RESULTS / f"{label}.partial.json"
+    cases = yaml.safe_load(Path(args.cases).read_text(encoding="utf-8"))
+    order = {c["id"]: i for i, c in enumerate(cases)}
 
     records: list[dict] = []
     if args.resume:
-        if final_path.exists():
+        # An interrupted run continues from its partial file. A finished one is extended with the
+        # checks added to the case file since it ran, so they don't force a re-run of the rest.
+        source = partial_path if partial_path.exists() else final_path if final_path.exists() else None
+        if source is not None:
+            saved = json.loads(source.read_text(encoding="utf-8"))
+            saved = saved["records"] if isinstance(saved, dict) else saved
+            records = [r for r in saved if not r.get("error") and r["id"] in order]  # errored checks get another try
+    done = {(r["id"], r["repeat"]) for r in records}
+    todo = sum((c["id"], rep) not in done for c in cases for rep in range(repeats))
+    if args.resume:
+        if not todo:
             print(f"{label}: already complete, skipping")
             return
-        if partial_path.exists():
-            saved = json.loads(partial_path.read_text(encoding="utf-8"))
-            records = [r for r in saved if not r.get("error")]  # errored checks get another try
-            print(f"{label}: resuming after {len(records)} finished checks "
-                  f"({len(saved) - len(records)} errored, retrying)", flush=True)
-    done = {(r["id"], r["repeat"]) for r in records}
+        if records:
+            print(f"{label}: resuming with {len(records)} saved checks, {todo} to run", flush=True)
 
     state = State()
     set_rls(state.owner, args.mode == "B3")
     registry = Registry.load()
-    cases = yaml.safe_load(Path(args.cases).read_text(encoding="utf-8"))
     procs = [] if args.no_spawn else spawn(args.mode, not args.no_egress_canary)
     try:
         _tokens.clear()
@@ -334,6 +342,7 @@ def main() -> None:
     finally:
         stop(procs)
 
+    records.sort(key=lambda r: (order[r["id"]], r["repeat"]))
     summary = defaultdict(lambda: {"runs": 0, "leak_answer": 0, "leak_any": 0, "errors": 0})
     for rec in records:
         for key in (rec["route"], "ALL"):
