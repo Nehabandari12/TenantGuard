@@ -22,6 +22,7 @@ A task also fails if a guard blocked anything or a tool call errored (a false "n
 
 import argparse
 import json
+import os
 import random
 import statistics
 import time
@@ -66,10 +67,15 @@ def main() -> None:
     ap.add_argument("--per-tenant", type=int, default=20)
     ap.add_argument("--agent-per-tenant", type=int, default=0, help="agent tasks of each kind per tenant")
     ap.add_argument("--no-spawn", action="store_true")
+    ap.add_argument("--firewall", choices=["heuristic", "promptguard"], default="heuristic", help="B2's input firewall")
     ap.add_argument("--resume", action="store_true", help="skip if finished; otherwise continue from the partial file")
     args = ap.parse_args()
     RESULTS.mkdir(parents=True, exist_ok=True)
-    final_path, partial_path = RESULTS / f"eval_{args.mode}.json", RESULTS / f"eval_{args.mode}.partial.json"
+    if args.firewall != "heuristic" and args.mode != "B2":
+        ap.error("--firewall only applies to B2")
+    os.environ["TG_FIREWALL"] = args.firewall  # inherited by the servers spawn() starts
+    label = args.mode + ("_promptguard" if args.firewall == "promptguard" else "")
+    final_path, partial_path = RESULTS / f"eval_{label}.json", RESULTS / f"eval_{label}.partial.json"
     data = build()
     docs, tickets = data["docs"], data["tickets"]
     rng = random.Random(7)

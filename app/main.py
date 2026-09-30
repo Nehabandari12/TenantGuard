@@ -31,6 +31,8 @@ async def lifespan(_app: FastAPI):
         state["tenant_names"] = dict(conn.execute("SELECT tenant_id, name FROM tg.tenants").fetchall())
     state["egress"] = Egress(codes, config.ALLOWED_LINK_DOMAINS, canary_check=config.GUARDS.egress_canary)
     get_llm()  # fail at startup, not on the first request, if the LLM provider is unavailable
+    if config.GUARDS.input_firewall:
+        firewall.load()
     seeded_with = (state["redis"].get("tg:embedder") or b"").decode()
     if seeded_with and seeded_with != embedder().name:
         raise RuntimeError(f"corpus was embedded with {seeded_with} but the app would use {embedder().name}")

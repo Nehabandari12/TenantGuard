@@ -67,6 +67,9 @@ OLLAMA_TIMEOUT_SECONDS = float(_env("OLLAMA_TIMEOUT_SECONDS", "600"))
 EMBEDDER = _env("EMBEDDER", "auto")
 EMBED_DIM = 384
 
+# B2's input firewall: "heuristic" (keyword filter) or "promptguard" (Llama Prompt Guard 2, needs the gated model).
+FIREWALL = _env("TG_FIREWALL", "heuristic")
+
 CACHE_DISTANCE_THRESHOLD = float(_env("CACHE_DISTANCE_THRESHOLD", "0.15"))
 TOP_K = 5
 

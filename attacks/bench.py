@@ -26,6 +26,7 @@ def main() -> None:
     ap.add_argument("--eval-per-tenant", type=int, default=5)
     ap.add_argument("--eval-agent-per-tenant", type=int, default=1, help="agent tasks of each kind per tenant")
     ap.add_argument("--repeats", type=int, default=None, help="repeats per check (added to what is saved)")
+    ap.add_argument("--promptguard", action="store_true", help="also run B2 with Llama Prompt Guard 2")
     ap.add_argument("--repeat-modes", default="B0,B1,B2,B3,B3_nocanary",
                     help="attack runs that get --repeats; the others keep what they have")
     args = ap.parse_args()
@@ -37,13 +38,18 @@ def main() -> None:
         step = ["attacks.run", "--mode", label.split("_")[0], "--resume"]
         if label.endswith("_nocanary"):
             step.append("--no-egress-canary")
+        if label.endswith("_promptguard"):
+            step += ["--firewall", "promptguard"]
         if args.repeats and label in repeat_modes:
             step += ["--repeats", str(args.repeats)]
         return step
 
-    steps = [attack(m) for m in modes] + [attack("B3_nocanary")]
+    steps = [attack(m) for m in modes] + [attack("B3_nocanary")] + ([attack("B2_promptguard")] if args.promptguard else [])
     steps += [["eval.run_eval", "--mode", m, "--per-tenant", str(args.eval_per_tenant),
                "--agent-per-tenant", str(args.eval_agent_per_tenant), "--resume"] for m in modes]
+    if args.promptguard:
+        steps.append(["eval.run_eval", "--mode", "B2", "--firewall", "promptguard", "--per-tenant", str(args.eval_per_tenant),
+                      "--agent-per-tenant", str(args.eval_agent_per_tenant), "--resume"])
     if config.LLM_PROVIDER == "ollama":
         steps.append(["eval.judge"])  # grades the saved answers with the same local model; skips graded ones
     steps.append(["attacks.table"])

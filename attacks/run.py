@@ -282,13 +282,17 @@ def main() -> None:
     ap.add_argument("--repeats", type=int, default=None, help="default: 1 for mock/ollama, 3 otherwise")
     ap.add_argument("--cases", default=str(ROOT / "attacks" / "cases.yaml"))
     ap.add_argument("--no-egress-canary", action="store_true")
+    ap.add_argument("--firewall", choices=["heuristic", "promptguard"], default="heuristic", help="B2's input firewall")
     ap.add_argument("--no-spawn", action="store_true")
     ap.add_argument("--resume", action="store_true",
                     help="run only the checks missing from the saved results (partial or finished)")
     args = ap.parse_args()
     # mock and ollama (temperature 0, fixed seed) are deterministic, so one repeat is enough.
     repeats = args.repeats or (1 if config.LLM_PROVIDER in ("mock", "ollama") else 3)
-    label = args.mode + ("_nocanary" if args.no_egress_canary else "")
+    if args.firewall != "heuristic" and args.mode != "B2":
+        ap.error("--firewall only applies to B2")
+    os.environ["TG_FIREWALL"] = args.firewall  # inherited by the servers spawn() starts
+    label = args.mode + ("_nocanary" if args.no_egress_canary else "") + ("_promptguard" if args.firewall == "promptguard" else "")
     RESULTS.mkdir(parents=True, exist_ok=True)
     final_path, partial_path = RESULTS / f"{label}.json", RESULTS / f"{label}.partial.json"
     cases = yaml.safe_load(Path(args.cases).read_text(encoding="utf-8"))
@@ -355,7 +359,8 @@ def main() -> None:
             s["leak_any"] += rec["leak_any"]
             s["errors"] += bool(rec.get("error"))
     health = {"mode": args.mode, "llm": config.LLM_PROVIDER, "llm_model": config.LLM_MODEL if config.LLM_PROVIDER != "mock" else None,
-              "egress_canary": not args.no_egress_canary, "repeats": repeats}
+              "egress_canary": not args.no_egress_canary, "repeats": repeats,
+              "firewall": args.firewall if args.mode == "B2" else None}
     out = {"meta": health, "summary": summary, "records": records}
     final_path.write_text(json.dumps(out, indent=2), encoding="utf-8")
     partial_path.unlink(missing_ok=True)

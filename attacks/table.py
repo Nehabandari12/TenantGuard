@@ -10,8 +10,8 @@ from attacks.run import RESULTS
 
 ROUTES = [("search", "LLM08"), ("cache", "LLM08"), ("memory", "ASI06"), ("tools", "ASI02/ASI03"),
           ("injection", "LLM01/ASI01"), ("logs", "LLM02"), ("ALL", "")]
-LABELS = {"B0": "B0 no protection", "B1": "B1 app tenant filter", "B2": "B2 B1 + input firewall",
-          "B3": "B3 TenantGuard", "B3_nocanary": "B3 without egress canary check"}
+LABELS = {"B0": "B0 no protection", "B1": "B1 app tenant filter", "B2": "B2 B1 + keyword firewall",
+          "B2_promptguard": "B2 with Prompt Guard 2", "B3": "B3 TenantGuard", "B3_nocanary": "B3 without egress canary check"}
 
 
 def pct(n: int, d: int) -> str:
@@ -58,7 +58,7 @@ def main() -> None:
             lines += ["", f"Hidden leaks in B2 (caught by all-channels scoring, missed by answers-only): "
                           f"{hidden} of {b2['runs']} runs ({pct(hidden, b2['runs'])})."]
     evals = {m: json.loads((RESULTS / f"eval_{m}.json").read_text(encoding="utf-8"))["summary"]
-             for m in ("B0", "B1", "B2", "B3") if (RESULTS / f"eval_{m}.json").exists()}
+             for m in ("B0", "B1", "B2", "B2_promptguard", "B3") if (RESULTS / f"eval_{m}.json").exists()}
     if evals:
         judged = any(s.get("judge_correct") is not None for s in evals.values())
         lines += ["", "## Utility (normal questions)", "",
