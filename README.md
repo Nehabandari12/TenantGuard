@@ -17,13 +17,26 @@ A leak is a canary (e.g. `GLBX-4A1F0C`) showing up where its owner tenant can't 
 external URLs, and notes written into another tenant's records. It matches after undoing base64, hex,
 URL-encoding, reversal and inserted separators.
 
-## Results (23 checks per mode)
+## Results
 
-Leak rate, answers-only / all-channels, for two models: a real one (**Qwen3 4B**, local through Ollama) and an
-offline **mock** that obeys any instruction it sees (the worst case). No check errored or timed out in either
-run. Full tables: [results/qwen3-4b/RESULTS.md](results/qwen3-4b/RESULTS.md), [results/mock/RESULTS.md](results/mock/RESULTS.md).
+78 checks, 13 per route. Leak rate, answers-only / all-channels. Two models: an offline **mock** that obeys any
+instruction it sees (the worst case) ran all 78, and a real one (**Qwen3 4B**, local through Ollama) ran the
+first 23, before the suite grew. No check errored or timed out in any run. Full tables:
+[results/mock/RESULTS.md](results/mock/RESULTS.md), [results/qwen3-4b/RESULTS.md](results/qwen3-4b/RESULTS.md).
 
-**Qwen3 4B**
+**Mock model (worst-case obedient), 78 checks**
+
+| Route | OWASP | B0 | B1 | B2 | B3 | B3, egress canary check off |
+|---|---|---|---|---|---|---|
+| search | LLM08 | 100% / 100% | 31% / 31% | 31% / 31% | 0% / 0% | 0% / 0% |
+| cache | LLM08 | 100% / 100% | 100% / 100% | 100% / 100% | 0% / 0% | 0% / 0% |
+| memory | ASI06 | 92% / 100% | 62% / 77% | 62% / 77% | 0% / 0% | 0% / 0% |
+| tools | ASI02/ASI03 | 85% / 100% | 54% / 69% | 54% / 69% | 0% / 0% | 0% / 0% |
+| injection | LLM01/ASI01 | 38% / 100% | 38% / 69% | 38% / 69% | 0% / 0% | 0% / 0% |
+| logs | LLM02 | 100% / 100% | 62% / 62% | 62% / 62% | 0% / 0% | 0% / 0% |
+| **all** | | 86% / 100% | 58% / 68% | 58% / 68% | **0% / 0%** | **0% / 0%** |
+
+**Qwen3 4B, first 23 checks (3-5 per route)**
 
 | Route | OWASP | B0 | B1 | B2 | B3 | B3, egress canary check off |
 |---|---|---|---|---|---|---|
@@ -35,28 +48,22 @@ run. Full tables: [results/qwen3-4b/RESULTS.md](results/qwen3-4b/RESULTS.md), [r
 | logs | LLM02 | 100% / 100% | 33% / 33% | 33% / 33% | 0% / 0% | 0% / 0% |
 | **all** | | 65% / 100% | 39% / 57% | 39% / 57% | **0% / 0%** | **0% / 0%** |
 
-**Mock model (worst-case obedient)**
+What the runs show:
 
-| Route | OWASP | B0 | B1 | B2 | B3 | B3, egress canary check off |
-|---|---|---|---|---|---|---|
-| search | LLM08 | 100% / 100% | 20% / 20% | 20% / 20% | 0% / 0% | 0% / 0% |
-| cache | LLM08 | 100% / 100% | 100% / 100% | 100% / 100% | 0% / 0% | 0% / 0% |
-| memory | ASI06 | 100% / 100% | 67% / 67% | 67% / 67% | 0% / 0% | 0% / 0% |
-| tools | ASI02/ASI03 | 100% / 100% | 60% / 60% | 60% / 60% | 0% / 0% | 0% / 0% |
-| injection | LLM01/ASI01 | 50% / 100% | 50% / 75% | 50% / 75% | 0% / 0% | 0% / 0% |
-| logs | LLM02 | 100% / 100% | 33% / 33% | 33% / 33% | 0% / 0% | 0% / 0% |
-| **all** | | 91% / 100% | 52% / 57% | 52% / 57% | **0% / 0%** | **0% / 0%** |
-
-What the two runs show:
-
-- **B3 held at 0% on both models**, and still 0% with the egress canary check turned off, so the protection
-  comes from making other tenants' data unreachable, not from egress recognising canaries.
-- **The tutorial fix (B1) still leaks in 57% of checks on both models**, through the semantic cache, memory
-  keyed by usernames that repeat across companies, tools that trust a model-supplied `tenant_id`, and the
-  log viewer's tenant switch. The input firewall (B2) changed nothing.
+- **B3 held at 0% on every check, on both models**, and still 0% with the egress canary check turned off,
+  so the protection comes from making other tenants' data unreachable, not from egress recognising canaries.
+  Every B3 outcome is an explicit denial (403, refused MCP token, "not found or not accessible") or the
+  caller's own data.
+- **The tutorial fix (B1) still leaks in 68% of the 78 checks** (mock; 57% of the first 23 on Qwen), through
+  the semantic cache, memory keyed by usernames that repeat across companies, tools that trust a
+  model-supplied `tenant_id`, the tenant-switch header and the log viewer's `?tenant=` parameter. It does
+  stop plain ID guessing and unauthenticated tool calls. The input firewall (B2) changed nothing.
 - **A real model hides leaks from answer-only audits.** Qwen rephrases instead of repeating reference codes.
   In B0 its search answers looked clean (0%) while every one of them had pulled other companies' documents
-  into context (100%). Across B0, 35% of checks leak somewhere other than the answer, against 9% for the mock.
+  into context (100%). On the same 23 checks, 35% of B0 checks leak somewhere other than the answer, against
+  9% for the mock. Even the mock hides some: in B1, 8 of 78 checks leak only through memory recall (2),
+  notes written into another tenant's ticket (2), or a link that sends the tenant's own ticket codes to an
+  outside site (4).
 - **Normal use is unaffected.** Every mode answered every utility question correctly: Qwen 15 per mode, mock
   60 per mode, 100% recall@5, 0 wrong blocks. The guard overhead, measured on the mock where the LLM costs
   nothing, is about 40-60 ms at p50. Qwen's latencies (33-65 s at p50 on CPU) are dominated by inference and
@@ -64,8 +71,8 @@ What the two runs show:
 - **Unprotected retrieval costs compute too.** With other companies' near-duplicate documents in context,
   Qwen produced about twice as many output tokens in B0 (9,197 vs 4,126-4,431 in B1-B3, over 15 questions).
 
-Read these numbers with the [limitations](#limitations) in mind: 23 checks so far (the target is ~80),
-and one repeat per check.
+Read these numbers with the [limitations](#limitations) in mind: Qwen has run 23 of the 78 checks, and each
+check ran once.
 
 ## How it works
 
@@ -134,8 +141,8 @@ per check by default; pass `--repeats 3` to measure run-to-run variation.
   numbers for a real model are therefore a lower bound.
 - On a CPU-only machine Qwen3 4B takes about a minute per request, so the Qwen utility eval uses 15
   questions per mode instead of 60.
-- There are 23 checks (3-5 per route) against a target of ~80, and no encoded/translated variants of
-  inputs yet. The detector and egress *do* decode base64/hex/URL/reversed/split output.
+- Qwen has run the first 23 of the 78 checks. `python -m attacks.bench` with Ollama runs the other 55 and
+  keeps the 23 already done. There are no encoded or translated variants of the inputs yet. The detector and egress *do* decode base64/hex/URL/reversed/split output.
 - B2 used the keyword-heuristic fallback because LlamaFirewall was not installed (it needs gated Hugging
   Face access to Llama Prompt Guard 2). The input firewall caught none of these checks, because none rely
   on jailbreak phrasing and it never sees retrieved tickets.
