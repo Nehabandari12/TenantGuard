@@ -105,7 +105,7 @@ docker compose up -d
 uv venv --python 3.12 .venv && uv pip install --python .venv -e ".[embed,pii,dev]"
 .venv/Scripts/python -m spacy download en_core_web_sm        # Presidio model (bin/ on macOS/Linux)
 .venv/Scripts/python -m app.seed                              # 3 companies, 150 docs, 60 tickets, 222 canaries
-.venv/Scripts/python -m pytest -q                             # 28 unit tests
+.venv/Scripts/python -m pytest -q                             # 31 unit tests
 .venv/Scripts/python -m tenantguard.admin rls on && .venv/Scripts/python -m tenantguard.rls_audit   # RLS audit (B3 state)
 .venv/Scripts/python -m attacks.bench                         # everything below, resumable; writes results/<model>/
 ```
@@ -149,7 +149,9 @@ per check by default; pass `--repeats 3` to measure run-to-run variation.
 - B3 scoring 0% even with the egress canary check off shows the protection comes from the access layer.
   Egress still matters for the injection route: link stripping is what stops a tenant's own data from
   leaving through a URL.
-- "Answer hit" is a string match on the expected fact, not an LLM judge.
+- "Answer hit" is a string match on the expected fact. `python -m eval.judge` also grades the saved answers
+  with the local model (it catches the right number credited to the wrong company), but the numbers above
+  predate it.
 - Synthetic data only.
 
 ## Credits
