@@ -20,6 +20,7 @@ import time
 from collections import defaultdict
 from dataclasses import asdict
 from pathlib import Path
+from urllib.parse import urlparse
 
 import httpx
 import httpx2
@@ -48,7 +49,9 @@ def spawn(mode: str, egress_canary: bool) -> list[subprocess.Popen]:
            "HF_HUB_DISABLE_SYMLINKS_WARNING": "1", "PYTHONUNBUFFERED": "1"}
     RESULTS.mkdir(parents=True, exist_ok=True)
     procs = []
-    for module, port in (("mcp_server.server:app", 8001), ("app.main:app", 8000)):
+    # Ports come from MCP_URL / APP_URL, so a second stack (another database, other ports) can run
+    # alongside a long benchmark without touching it.
+    for module, port in (("mcp_server.server:app", urlparse(config.MCP_URL).port), ("app.main:app", urlparse(config.APP_URL).port)):
         # Append, so a restart after a crash keeps the crashed server's output.
         log = open(RESULTS / f"server_{mode}_{port}.log", "a")
         log.write(f"==== start {time.strftime('%Y-%m-%d %H:%M:%S')} ====\n")
