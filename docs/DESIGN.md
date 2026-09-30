@@ -34,6 +34,15 @@ ENABLE + FORCE as the owner. B0-B2 stand in for apps without RLS, and the app ro
 set the tenant errors instead of quietly returning zero rows. Unscoped cache and memory calls raise
 `TenantContextError` the same way.
 
+**Audit the RLS setup, don't trust it.** Every way RLS fails is silent: a superuser or BYPASSRLS role, a
+table owner without FORCE, one extra permissive policy (policies are OR-ed, so `USING (true)` opens the
+table), a view that runs with its owner's rights, a SECURITY DEFINER function. `python -m tenantguard.rls_audit`
+checks each of these in the catalog, then connects as the app role and tries it: read with no tenant set,
+read as each tenant, write a row for another tenant (all rolled back). CI builds a fresh database from
+`sql/`, seeds it, turns enforcement on and runs the audit, plus tests that break the setup one way at a
+time and check that the audit fails. Pointed at the Docker superuser, it reports 24 failures although
+every table has RLS enabled and forced.
+
 **Tenant context per transaction.** Each unit of work is one explicit transaction that starts with
 `set_config('app.tenant_id', t, true)` and `SET LOCAL hnsw.iterative_scan = relaxed_order`. The `true`
 makes the setting transaction-local, so a pooled connection can't carry one tenant's context into the next
@@ -169,5 +178,4 @@ attribution, but it wasn't needed. From the unlicensed ones only the ideas were 
 - B2 ran on the keyword heuristic, because LlamaFirewall needs gated access to Llama Prompt Guard 2.
 - Answer quality is a string match on the expected fact, not an LLM judge.
 - Qwen runs with `--repeats 3` to measure run-to-run variation.
-- An RLS policy check in CI (for example rlsgrid).
 - A reviewer agent that approves each tool call.

@@ -79,7 +79,7 @@ and one repeat per check.
 ```
 
 - **Identity** ([tenantguard/identity.py](tenantguard/identity.py)): the tenant comes only from a verified JWT, never from the body, a header or the model.
-- **Postgres** ([tenantguard/db.py](tenantguard/db.py), [sql/001_init.sql](sql/001_init.sql)): ENABLE + FORCE RLS, a fail-closed policy function, `set_config(..., true)` inside an explicit transaction, `hnsw.iterative_scan` so filtered search still returns a full top 5, and a startup check that refuses superuser or BYPASSRLS roles.
+- **Postgres** ([tenantguard/db.py](tenantguard/db.py), [sql/001_init.sql](sql/001_init.sql)): ENABLE + FORCE RLS, a fail-closed policy function, `set_config(..., true)` inside an explicit transaction, `hnsw.iterative_scan` so filtered search still returns a full top 5, and a startup check that refuses superuser or BYPASSRLS roles. [tenantguard/rls_audit.py](tenantguard/rls_audit.py) audits all of this against a live database, and CI runs it on a freshly built one.
 - **Cache** ([tenantguard/cache.py](tenantguard/cache.py)): RedisVL `SemanticCache` that always stores and always filters a `tenant_id` tag.
 - **Memory** ([tenantguard/memory.py](tenantguard/memory.py)): namespace is always `tenant:user`, and a call without a verified tenant raises.
 - **MCP** ([tenantguard/mcp_auth.py](tenantguard/mcp_auth.py)): no token passthrough. Each request gets a freshly minted, 60 s token whose audience is the MCP server, and tools have no tenant argument. The mcp 2.x SDK binds each session to the token's subject (`tenant:user`).
@@ -98,7 +98,8 @@ docker compose up -d
 uv venv --python 3.12 .venv && uv pip install --python .venv -e ".[embed,pii,dev]"
 .venv/Scripts/python -m spacy download en_core_web_sm        # Presidio model (bin/ on macOS/Linux)
 .venv/Scripts/python -m app.seed                              # 3 companies, 150 docs, 60 tickets, 222 canaries
-.venv/Scripts/python -m pytest -q                             # 27 unit tests
+.venv/Scripts/python -m pytest -q                             # 28 unit tests
+.venv/Scripts/python -m tenantguard.admin rls on && .venv/Scripts/python -m tenantguard.rls_audit   # RLS audit (B3 state)
 .venv/Scripts/python -m attacks.bench                         # everything below, resumable; writes results/<model>/
 ```
 
