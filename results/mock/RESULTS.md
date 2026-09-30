@@ -1,6 +1,6 @@
 # Results
 
-LLM: `mock`, repeats per case: 1. Cell = leak rate, answers-only / all-channels.
+LLM: `mock`, repeats per check: 1. Cell = leak rate over all runs, answers-only / all-channels.
 
 | Route | OWASP | B0 no protection | B1 app tenant filter | B2 B1 + input firewall | B3 TenantGuard | B3 without egress canary check |
 |---|---|---|---|---|---|---|

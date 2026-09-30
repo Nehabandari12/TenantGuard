@@ -24,8 +24,11 @@ def main() -> None:
     lines = ["# Results", ""]
     if runs:
         meta = next(iter(runs.values()))["meta"]
+        reps = {LABELS[l]: r["meta"]["repeats"] for l, r in runs.items()}
+        rep_text = (str(meta["repeats"]) if len(set(reps.values())) == 1
+                    else ", ".join(f"{k} {v}" for k, v in reps.items()))
         lines += [f"LLM: `{meta['llm']}`{' / ' + meta['llm_model'] if meta.get('llm_model') else ''}, "
-                  f"repeats per case: {meta['repeats']}. Cell = leak rate, answers-only / all-channels.", ""]
+                  f"repeats per check: {rep_text}. Cell = leak rate over all runs, answers-only / all-channels.", ""]
         lines.append("| Route | OWASP | " + " | ".join(LABELS[l] for l in runs) + " |")
         lines.append("|---|---|" + "---|" * len(runs))
         for route, owasp in ROUTES:
@@ -34,6 +37,17 @@ def main() -> None:
                 s = run["summary"].get(route)
                 cells.append(f"{pct(s['leak_answer'], s['runs'])} / {pct(s['leak_any'], s['runs'])}" if s else "-")
             lines.append(f"| {'**all**' if route == 'ALL' else route} | {owasp} | " + " | ".join(cells) + " |")
+        unstable = {}
+        for label, run in runs.items():
+            outcomes: dict[str, set] = {}
+            for rec in run["records"]:
+                if not rec.get("error"):
+                    outcomes.setdefault(rec["id"], set()).add(rec["leak_any"])
+            if run["meta"]["repeats"] > 1:
+                unstable[LABELS[label]] = sorted(i for i, o in outcomes.items() if len(o) > 1)
+        if unstable:
+            lines += ["", "Checks whose all-channels outcome changed between repeats: "
+                      + "; ".join(f"{k}: {len(v)}" + (f" ({', '.join(v)})" if v else "") for k, v in unstable.items()) + "."]
         errored = {LABELS[l]: r["summary"]["ALL"].get("errors", 0) for l, r in runs.items() if r["summary"]["ALL"].get("errors")}
         if errored:
             lines += ["", "Checks that errored (timed out; counted as runs but not as leaks, so they could hide one): "

@@ -1,6 +1,7 @@
 """Run the whole benchmark for the current LLM, end to end, resumably.
 
     python -m attacks.bench [--eval-per-tenant 5] [--eval-agent-per-tenant 1]
+    python -m attacks.bench --repeats 3 --repeat-modes B0,B1,B2    # add repeats 2-3 to those runs
 
 Steps: attack runs B0-B3, B3 without the egress canary check, utility eval B0-B3, the LLM judge on the
 eval answers (local Ollama models only), results table.
@@ -24,11 +25,23 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--eval-per-tenant", type=int, default=5)
     ap.add_argument("--eval-agent-per-tenant", type=int, default=1, help="agent tasks of each kind per tenant")
+    ap.add_argument("--repeats", type=int, default=None, help="repeats per check (added to what is saved)")
+    ap.add_argument("--repeat-modes", default="B0,B1,B2,B3,B3_nocanary",
+                    help="attack runs that get --repeats; the others keep what they have")
     args = ap.parse_args()
 
     modes = ["B0", "B1", "B2", "B3"]
-    steps = [["attacks.run", "--mode", m, "--resume"] for m in modes]
-    steps.append(["attacks.run", "--mode", "B3", "--no-egress-canary", "--resume"])
+    repeat_modes = set(args.repeat_modes.split(","))
+
+    def attack(label: str) -> list[str]:
+        step = ["attacks.run", "--mode", label.split("_")[0], "--resume"]
+        if label.endswith("_nocanary"):
+            step.append("--no-egress-canary")
+        if args.repeats and label in repeat_modes:
+            step += ["--repeats", str(args.repeats)]
+        return step
+
+    steps = [attack(m) for m in modes] + [attack("B3_nocanary")]
     steps += [["eval.run_eval", "--mode", m, "--per-tenant", str(args.eval_per_tenant),
                "--agent-per-tenant", str(args.eval_agent_per_tenant), "--resume"] for m in modes]
     if config.LLM_PROVIDER == "ollama":
