@@ -118,6 +118,7 @@ broken ingest would produce a 0% that looks like perfect isolation.
 | Long runs died with the terminal session, and a reboot also stopped Docker | First Qwen run, 9 checks into B0 | Runs save after every check and take `--resume`. `attacks/bench.py` runs every step, skips finished ones and logs to a file, so it can run detached |
 | One B3 agent request ran past the harness's 30-minute timeout (unbounded reasoning, up to 6 model calls), and the run crashed | B3 `injection-02` on Qwen | `OLLAMA_NUM_PREDICT=2048` caps each call; calls under the cap are unchanged at temperature 0 with a fixed seed. The step timeout is now derived from rounds × LLM timeout, so it outlasts anything the app can take. A scored step that times out or returns 5xx is recorded as an *error*, shown in the summary and table, and retried on resume. It is never scored as a pass |
 | A tool call that egress *blocked* was scored as an `external_url` leak, because the agent traced every call before egress checked it | B3 without the canary check, `injection-02` on Qwen: attacker link in `create_note` arguments, call refused, yet flagged | Blocked calls are traced on a separate `tool_call_blocked` channel that the detector doesn't score. Only that one record was affected; it was re-run |
+| The app server died mid-request with no Python traceback, taking the rest of the run with it | Qwen eval, B1: "connection forcibly closed"; the Windows log shows a native crash while system commit was at 42.9 of 44.7 GB | The runner restarts both servers and re-runs the whole check once from a clean reset (a second failure is an error). The eval retries the question once. Server logs are appended, so a crash's output survives the restart |
 
 The expired-token bug is the instructive one: a harness failure that produced exactly the number you want
 to see. Setup failures now stop the run.
@@ -131,6 +132,18 @@ of 60. Paid APIs stay off unless `TG_ALLOW_PAID_LLM=1`, and there is no fallback
 
 Something only the real model showed: in B0, Qwen's answer used only Initech's document, but the
 response's source list still named Globex's and Acme's documents. An answers-only audit would call that clean.
+
+Across the full run the all-channels rates match the mock's (B0 100%, B1 and B2 57%, B3 0%). The structural
+gaps are the same whoever the model is. What changes is where the leak shows up. Qwen rephrases instead of
+repeating reference codes, so its answers-only rates are lower (B0 65% vs 91%; B1 and B2 39% vs 52%). In
+B1/B2 injection, for example, it did what the planted instructions said (fetched another tenant's ticket,
+or put the tenant's ticket codes into the attacker's link) but left the stolen text out of its reply. It also followed planted instructions in ticket
+text readily, so "a real model would refuse" did not hold for a 4B model.
+
+The machine this ran on had 16 GB RAM, and Ollama reserved about 11.6 GB of commit for its parallel slots
+at an 8,192-token context. With Docker and desktop apps open, the system hit its commit limit, and the app
+server crashed natively mid-request (`0xc000070a` in `ntdll.dll`). `OLLAMA_NUM_PARALLEL=1` would shrink
+Ollama's share. The harness now survives such a crash rather than depending on it not happening.
 
 ## Prior work
 
