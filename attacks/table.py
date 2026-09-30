@@ -46,12 +46,29 @@ def main() -> None:
     evals = {m: json.loads((RESULTS / f"eval_{m}.json").read_text(encoding="utf-8"))["summary"]
              for m in ("B0", "B1", "B2", "B3") if (RESULTS / f"eval_{m}.json").exists()}
     if evals:
+        judged = any(s.get("judge_correct") is not None for s in evals.values())
         lines += ["", "## Utility (normal questions)", "",
-                  "| Mode | Questions | Recall@5 | Answer hit | Wrong blocks | p50 ms | p95 ms | Tokens in/out | USD |",
-                  "|---|---|---|---|---|---|---|---|---|"]
+                  "| Mode | Questions | Recall@5 | Answer hit | " + ("Judge: correct | Judge agrees with hit | " if judged else "")
+                  + "Wrong blocks | p50 ms | p95 ms | Tokens in/out | USD |",
+                  "|---|---|---|---|" + ("---|---|" if judged else "") + "---|---|---|---|---|"]
         for m, s in evals.items():
-            lines.append(f"| {m} | {s['questions']} | {s['recall_at_5']:.0%} | {s['answer_hit']:.0%} | {s['wrong_block']:.0%} | "
+            judge = (f"{pct(round(s['judge_correct'] * s['judged']), s['judged'])} | {pct(round(s['judge_agrees'] * s['judged']), s['judged'])} | "
+                     if s.get("judge_correct") is not None else "- | - | ") if judged else ""
+            lines.append(f"| {m} | {s['questions']} | {s['recall_at_5']:.0%} | {s['answer_hit']:.0%} | {judge}{s['wrong_block']:.0%} | "
                          f"{s['p50_ms']:.0f} | {s['p95_ms']:.0f} | {s['input_tokens']}/{s['output_tokens']} | {s['usd']:.4f} |")
+        if judged:
+            model = next(s["judge_model"] for s in evals.values() if s.get("judge_model"))
+            lines += ["", f"Answer hit: the expected value appears in the answer. Judge: `{model}` (local) decides whether the "
+                          "answer gives the asking company's value."]
+    agent = {m: s["agent"] for m, s in evals.items() if s.get("agent")}
+    if agent:
+        lines += ["", "## Agent tasks on the tenant's own data", "",
+                  "| Mode | Tasks | Done | Read a ticket | Search | Add a note | Wrong blocks | Tool errors | p50 ms |",
+                  "|---|---|---|---|---|---|---|---|---|"]
+        for m, a in agent.items():
+            k = a["by_kind"]
+            lines.append(f"| {m} | {a['tasks']} | {a['done']:.0%} | {k['ticket']:.0%} | {k['search']:.0%} | {k['note']:.0%} | "
+                         f"{a['wrong_block']:.0%} | {a['tool_error']:.0%} | {a['p50_ms']:.0f} |")
     (RESULTS / "RESULTS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines))
 

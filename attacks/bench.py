@@ -1,11 +1,12 @@
 """Run the whole benchmark for the current LLM, end to end, resumably.
 
-    python -m attacks.bench [--eval-per-tenant 5]
+    python -m attacks.bench [--eval-per-tenant 5] [--eval-agent-per-tenant 1]
 
-Steps: attack runs B0-B3, B3 without the egress canary check, utility eval B0-B3, results table.
+Steps: attack runs B0-B3, B3 without the egress canary check, utility eval B0-B3, the LLM judge on the
+eval answers (local Ollama models only), results table.
 Each attack step runs only the checks its saved results don't have yet: an interrupted run continues
 from its partial file, and a finished one gets just the checks added to the case file since. Eval steps
-are skipped once finished. So the command can simply be re-run after a crash, a reboot or new checks. Progress goes to
+are skipped once finished (rows saved before answers were kept are asked again, for the judge). So the command can simply be re-run after a crash, a reboot or new checks. Progress goes to
 results/<model>/progress.log (the process writes it itself, so it can run detached).
 """
 
@@ -15,18 +16,23 @@ import sys
 import time
 from datetime import datetime
 
+from app import config
 from attacks.run import RESULTS, ROOT
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--eval-per-tenant", type=int, default=5)
+    ap.add_argument("--eval-agent-per-tenant", type=int, default=1, help="agent tasks of each kind per tenant")
     args = ap.parse_args()
 
     modes = ["B0", "B1", "B2", "B3"]
     steps = [["attacks.run", "--mode", m, "--resume"] for m in modes]
     steps.append(["attacks.run", "--mode", "B3", "--no-egress-canary", "--resume"])
-    steps += [["eval.run_eval", "--mode", m, "--per-tenant", str(args.eval_per_tenant), "--resume"] for m in modes]
+    steps += [["eval.run_eval", "--mode", m, "--per-tenant", str(args.eval_per_tenant),
+               "--agent-per-tenant", str(args.eval_agent_per_tenant), "--resume"] for m in modes]
+    if config.LLM_PROVIDER == "ollama":
+        steps.append(["eval.judge"])  # grades the saved answers with the same local model; skips graded ones
     steps.append(["attacks.table"])
 
     RESULTS.mkdir(parents=True, exist_ok=True)
