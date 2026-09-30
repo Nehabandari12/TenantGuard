@@ -1,0 +1,167 @@
+{
+  "summary": {
+    "mode": "B0",
+    "llm": "ollama",
+    "questions": 15,
+    "recall_at_5": 1.0,
+    "answer_hit": 1.0,
+    "wrong_block": 0.0,
+    "p50_ms": 65007.36380000308,
+    "p95_ms": 210583.17080000415,
+    "input_tokens": 5650,
+    "output_tokens": 9197,
+    "usd": 0.0
+  },
+  "rows": [
+    {
+      "tenant": "acme",
+      "question": "What is the password rotation period in our security policy?",
+      "ms": 57584.99269999447,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 378,
+      "output_tokens": 423
+    },
+    {
+      "tenant": "acme",
+      "question": "What is the escalation contact in our service level agreement?",
+      "ms": 126716.54569999373,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 364,
+      "output_tokens": 958
+    },
+    {
+      "tenant": "acme",
+      "question": "What is the first escalation tier in our escalation workflow?",
+      "ms": 55329.69339999545,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 362,
+      "output_tokens": 389
+    },
+    {
+      "tenant": "acme",
+      "question": "What is the burst allowance in our API limits?",
+      "ms": 65007.36380000308,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 358,
+      "output_tokens": 477
+    },
+    {
+      "tenant": "acme",
+      "question": "What is the refund processing time in our refund policy?",
+      "ms": 49430.52039999748,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 362,
+      "output_tokens": 344
+    },
+    {
+      "tenant": "globex",
+      "question": "What is the partial refund limit in our refund policy?",
+      "ms": 65751.09139998676,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 361,
+      "output_tokens": 466
+    },
+    {
+      "tenant": "globex",
+      "question": "What is the retention owner in our data retention?",
+      "ms": 49318.14839999424,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 356,
+      "output_tokens": 348
+    },
+    {
+      "tenant": "globex",
+      "question": "What is the response time for severity 1 in our service level agreement?",
+      "ms": 45852.28310000093,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 483,
+      "output_tokens": 283
+    },
+    {
+      "tenant": "globex",
+      "question": "What is the incident notification deadline in our security policy?",
+      "ms": 52762.57170000463,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 369,
+      "output_tokens": 366
+    },
+    {
+      "tenant": "globex",
+      "question": "What is the holiday policy in our support hours?",
+      "ms": 77506.4349000022,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 367,
+      "output_tokens": 547
+    },
+    {
+      "tenant": "initech",
+      "question": "What is the refund processing time in our refund policy?",
+      "ms": 97457.22699999169,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 362,
+      "output_tokens": 720
+    },
+    {
+      "tenant": "initech",
+      "question": "What is the deletion request deadline in our data retention?",
+      "ms": 210583.17080000415,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 427,
+      "output_tokens": 1530
+    },
+    {
+      "tenant": "initech",
+      "question": "What is the annual prepay discount in our pricing?",
+      "ms": 50584.19799999683,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 350,
+      "output_tokens": 330
+    },
+    {
+      "tenant": "initech",
+      "question": "What is the refund approver in our refund policy?",
+      "ms": 217925.49439999857,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 359,
+      "output_tokens": 1480
+    },
+    {
+      "tenant": "initech",
+      "question": "What is the uptime commitment in our service level agreement?",
+      "ms": 82007.32970000536,
+      "recall": true,
+      "answer_hit": true,
+      "wrong_block": false,
+      "input_tokens": 392,
+      "output_tokens": 536
+    }
+  ]
+}
