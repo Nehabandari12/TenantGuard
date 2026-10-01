@@ -194,3 +194,11 @@ def test_canary_split_across_replies_is_found():
               {"channel": "final_output", "content": "1F0C and that is all."}]
     assert detect(_registry(), "acme", events, [], []) == [Leak("final_output", FOREIGN, "globex", "acme")]
     assert detect(_registry(), "acme", events[:1], [], []) == []
+
+
+def test_direct_mcp_failure_is_an_error_not_a_pass(monkeypatch):
+    from attacks import run
+    for status, expected in ((401, 401), (403, 403), (None, 502), (500, 502), (200, 502)):
+        monkeypatch.setattr(run, "mcp_status", lambda bearer, s=status: s)
+        assert run.mcp_outcome_status("error: MCPError: Server returned an error response", None) == expected
+    assert run.mcp_outcome_status("Ticket T-1001 [acme] ...", None) == 200

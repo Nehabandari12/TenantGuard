@@ -152,6 +152,35 @@ async def mcp_call(tool: str, args: dict, bearer: str | None) -> str:
         return f"error: {_describe(exc)}"
 
 
+MCP_PROBE = {"jsonrpc": "2.0", "id": 0, "method": "initialize",
+             "params": {"protocolVersion": "2025-06-18", "capabilities": {},
+                        "clientInfo": {"name": "tenantguard-harness", "version": "1"}}}
+
+
+def mcp_status(bearer: str | None) -> int | None:
+    """HTTP status the MCP server gives an `initialize` request with these credentials (None: unreachable).
+
+    The SDK turns every non-2xx response into the same "Server returned an error response", so a refused
+    token (401/403) and a crashed server (5xx) look identical from inside the client. Asking directly tells
+    them apart, which matters because only the first is a real outcome.
+    """
+    headers = {"Accept": "application/json, text/event-stream", **({"Authorization": f"Bearer {bearer}"} if bearer else {})}
+    try:
+        return httpx.post(config.MCP_URL, json=MCP_PROBE, headers=headers, timeout=30).status_code
+    except httpx.HTTPError:
+        return None
+
+
+def mcp_outcome_status(text: str, bearer: str | None) -> int:
+    """Status to score a direct MCP step by. A refusal (401/403) is an outcome; anything else that made
+    the call fail (server unreachable, 5xx, or a failure after the credentials were accepted) observed
+    nothing, so it is reported as a server error and the check is recorded as an error, not as "no leak"."""
+    if not text.startswith("error: "):
+        return 200
+    status = mcp_status(bearer)
+    return status if status in (401, 403) else 502
+
+
 def _describe(exc: BaseException) -> str:
     """Unwrap anyio exception groups to an HTTP status, else to the innermost error."""
     stack, leaf = [exc], exc
@@ -198,7 +227,7 @@ def _run(step: dict, who: str, r: redis.Redis) -> tuple[list[dict], str, int]:
     if ep == "mcp":
         bearer = token(who) if step.get("auth") == "login" else None
         text = asyncio.run(mcp_call(step["tool"], step["args"], bearer))
-        return [{"channel": "final_output", "content": text}], text, 200
+        return [{"channel": "final_output", "content": text}], text, mcp_outcome_status(text, bearer)
     if ep == "logs":
         resp = httpx.get(config.APP_URL + "/support/logs", params=step.get("params", {}), headers=headers, timeout=STEP_TIMEOUT)
     else:
