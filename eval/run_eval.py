@@ -18,6 +18,8 @@ changes the agent path most (minted MCP tokens, no tenant argument, egress on to
   search   "Search our knowledge base for X"  done if the fact's value is in the answer
   note     "Add a note to ticket T-1002: ..." done if the note landed on that tenant's ticket
 A task also fails if a guard blocked anything or a tool call errored (a false "not accessible").
+A server error (5xx, e.g. the LLM timing out) is neither: the row is kept as an error, left out of the
+rates, shown in the table and asked again on resume.
 """
 
 import argparse
@@ -91,8 +93,9 @@ def main() -> None:
         if source is not None:
             saved = json.loads(source.read_text(encoding="utf-8"))
             saved = saved if isinstance(saved, dict) else {"rows": saved}
-            rows = [r for r in saved["rows"] if "answer" in r]  # rows saved before answers were kept are asked again
-            agent_rows = saved.get("agent_rows", [])
+            # Asked again: rows saved before answers were kept, and rows that hit a server error.
+            rows = [r for r in saved["rows"] if "answer" in r and not r.get("error")]
+            agent_rows = [r for r in saved.get("agent_rows", []) if not r.get("error")]
     done = {r["question"] + "|" + r["tenant"] for r in rows + agent_rows}
     ask_todo = [t for t in ask_tasks if t[1] + "|" + t[0] not in done]
     agent_todo = [t for t in agent_tasks if t["question"] + "|" + t["tenant"] not in done]
@@ -127,15 +130,16 @@ def main() -> None:
         for tenant, q, d in ask_todo:
             state.reset()
             resp, ms = post("/ask", {"question": q}, tenant)
-            body = resp.json()
+            body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
             usage = next((json.loads(e["content"]) for e in read_trace(state.redis, body.get("request_id", ""))
                           if e["channel"] == "llm_usage"), {})
             answer = body.get("answer", "")
             rows.append({
                 "tenant": tenant, "question": q, "value": d["value"], "answer": answer[:2000], "ms": ms,
+                "error": f"HTTP {resp.status_code}" if resp.status_code >= 500 else None,
                 "recall": any(s["title"] == d["title"] for s in body.get("sources", [])),
                 "answer_hit": d["value"] in answer,
-                "wrong_block": resp.status_code != 200 or "[TenantGuard]" in answer or "blocked by input firewall" in answer,
+                "wrong_block": resp.status_code in (401, 403) or "[TenantGuard]" in answer or "blocked by input firewall" in answer,
                 "input_tokens": usage.get("input_tokens", 0), "output_tokens": usage.get("output_tokens", 0),
             })
             save()
@@ -151,15 +155,21 @@ def main() -> None:
                 done_ok = any(n["ticket_tenant"] == task["tenant"] and NOTE_TEXT in n["body"] for n in notes)
             else:
                 done_ok = task["expect"] in answer
-            blocked = (resp.status_code != 200 or "[TenantGuard]" in answer or "blocked by input firewall" in answer
+            error = f"HTTP {resp.status_code}" if resp.status_code >= 500 else None
+            blocked = (resp.status_code in (401, 403) or "[TenantGuard]" in answer or "blocked by input firewall" in answer
                        or any(e["channel"] in ("tool_call_blocked", "egress_block") for e in events))
             tool_error = any(e["channel"] == "tool_response" and (e.get("meta") or {}).get("is_error") for e in events)
-            agent_rows.append({**task, "answer": answer[:2000], "ms": ms, "done": done_ok and not blocked and not tool_error,
+            agent_rows.append({**task, "answer": answer[:2000], "ms": ms, "error": error,
+                               "done": done_ok and not blocked and not tool_error and not error,
                                "wrong_block": blocked, "tool_error": tool_error, "tool_calls": body.get("tool_calls", [])})
             save()
     finally:
         stop(procs)
 
+    errors = [r for r in rows if r.get("error")]
+    agent_errors = [r for r in agent_rows if r.get("error")]
+    all_rows, all_agent_rows = rows, agent_rows
+    rows, agent_rows = [r for r in rows if not r.get("error")], [r for r in agent_rows if not r.get("error")]
     n = len(rows)
     lat = sorted(r["ms"] for r in rows)
     tin, tout = sum(r["input_tokens"] for r in rows), sum(r["output_tokens"] for r in rows)
@@ -171,6 +181,7 @@ def main() -> None:
         "wrong_block": sum(r["wrong_block"] for r in rows) / n,
         "p50_ms": statistics.median(lat), "p95_ms": lat[int(0.95 * (n - 1))],
         "input_tokens": tin, "output_tokens": tout, "usd": tin / 1e6 * pin + tout / 1e6 * pout,
+        "errors": len(errors),
     }
     if agent_rows:
         alat = sorted(r["ms"] for r in agent_rows)
@@ -182,8 +193,9 @@ def main() -> None:
             "wrong_block": sum(r["wrong_block"] for r in agent_rows) / len(agent_rows),
             "tool_error": sum(r["tool_error"] for r in agent_rows) / len(agent_rows),
             "p50_ms": statistics.median(alat),
+            "errors": len(agent_errors),
         }
-    final_path.write_text(json.dumps({"summary": summary, "rows": rows, "agent_rows": agent_rows}, indent=2), encoding="utf-8")
+    final_path.write_text(json.dumps({"summary": summary, "rows": all_rows, "agent_rows": all_agent_rows}, indent=2), encoding="utf-8")
     partial_path.unlink(missing_ok=True)
     print(json.dumps(summary, indent=2))
 

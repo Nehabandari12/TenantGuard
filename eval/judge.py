@@ -71,12 +71,12 @@ def main() -> None:
             print(f"{path.name}: no saved answers (run before answers were stored); re-run the eval first")
             continue
         for i, row in enumerate(rows):
-            if row.get("judge") in ("correct", "incorrect"):
+            if row.get("judge") in ("correct", "incorrect") or row.get("error"):
                 continue
             row["judge"], row["judge_reply"] = grade(http, args.model, row)
             print(f"{path.name} {i + 1}/{len(rows)} {row['judge']:9} hit={row['answer_hit']}", flush=True)
             path.write_text(json.dumps(data, indent=2), encoding="utf-8")  # save as we go
-        graded = [r for r in rows if r["judge"] in ("correct", "incorrect")]
+        graded = [r for r in rows if r.get("judge") in ("correct", "incorrect")]
         data["summary"].update({
             "judge_model": args.model,
             "judged": len(graded),

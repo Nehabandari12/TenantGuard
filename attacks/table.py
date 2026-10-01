@@ -70,6 +70,10 @@ def main() -> None:
                      if s.get("judge_correct") is not None else "- | - | ") if judged else ""
             lines.append(f"| {m} | {s['questions']} | {s['recall_at_5']:.0%} | {s['answer_hit']:.0%} | {judge}{s['wrong_block']:.0%} | "
                          f"{s['p50_ms']:.0f} | {s['p95_ms']:.0f} | {s['input_tokens']}/{s['output_tokens']} | {s['usd']:.4f} |")
+        eval_errors = {m: s.get("errors", 0) + (s.get("agent") or {}).get("errors", 0) for m, s in evals.items()}
+        if any(eval_errors.values()):
+            lines += ["", "Eval rows that hit a server error (left out of the rates above): "
+                      + ", ".join(f"{m}: {v}" for m, v in eval_errors.items() if v) + "."]
         if judged:
             model = next(s["judge_model"] for s in evals.values() if s.get("judge_model"))
             lines += ["", f"Answer hit: the expected value appears in the answer. Judge: `{model}` (local) decides whether the "
