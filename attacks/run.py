@@ -266,8 +266,19 @@ def _answer_of(text: str) -> str:
 SERVER_DOWN = (httpx.ConnectError, httpx.ReadError, httpx.WriteError, httpx.RemoteProtocolError)
 
 
+def _commit() -> str | None:
+    try:
+        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True, timeout=10)
+        return out.stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+COMMIT = _commit()  # stored on every record, so results from different code are never mixed unknowingly
+
+
 def error_record(case: dict, rep: int, error: str) -> dict:
-    return {"id": case["id"], "route": case["route"], "owasp": case["owasp"], "repeat": rep,
+    return {"id": case["id"], "route": case["route"], "owasp": case["owasp"], "repeat": rep, "commit": COMMIT,
             "leak_answer": False, "leak_any": False, "channels": [], "leaks": [],
             "response": f"error: {error}", "error": error}
 
@@ -295,7 +306,7 @@ def run_check(case: dict, rep: int, state: "State", registry: Registry) -> dict:
     session_tenant = case["as"].split("/")[0]
     leaks = detect(registry, session_tenant, events, new_logs, new_notes, foreign_outputs)
     return {
-        "id": case["id"], "route": case["route"], "owasp": case["owasp"], "repeat": rep,
+        "id": case["id"], "route": case["route"], "owasp": case["owasp"], "repeat": rep, "commit": COMMIT,
         "leak_answer": any(l.channel == "final_output" for l in leaks),
         "leak_any": bool(leaks),
         "channels": sorted({l.channel for l in leaks}),
@@ -315,6 +326,7 @@ def main() -> None:
     ap.add_argument("--no-spawn", action="store_true")
     ap.add_argument("--resume", action="store_true",
                     help="run only the checks missing from the saved results (partial or finished)")
+    ap.add_argument("--rerun", default="", help="with --resume: check ids to run again even if saved (e.g. after a fix)")
     args = ap.parse_args()
     # mock and ollama (temperature 0, fixed seed) are deterministic, so one repeat is enough.
     repeats = args.repeats or (1 if config.LLM_PROVIDER in ("mock", "ollama") else 3)
@@ -327,15 +339,24 @@ def main() -> None:
     cases = yaml.safe_load(Path(args.cases).read_text(encoding="utf-8"))
     order = {c["id"]: i for i, c in enumerate(cases)}
 
+    rerun = {i.strip() for i in args.rerun.split(",") if i.strip()}
+    if rerun - set(order):
+        ap.error(f"--rerun names unknown checks: {sorted(rerun - set(order))}")
     records: list[dict] = []
+    previous_reruns: list[dict] = []
     if args.resume:
         # An interrupted run continues from its partial file. A finished one is extended with the
         # checks added to the case file since it ran, so they don't force a re-run of the rest.
         source = partial_path if partial_path.exists() else final_path if final_path.exists() else None
+        if final_path.exists():
+            previous_reruns = json.loads(final_path.read_text(encoding="utf-8")).get("meta", {}).get("reruns", [])
         if source is not None:
             saved = json.loads(source.read_text(encoding="utf-8"))
             saved = saved["records"] if isinstance(saved, dict) else saved
-            records = [r for r in saved if not r.get("error") and r["id"] in order]  # errored checks get another try
+            # Errored checks get another try, and so do the --rerun ones when starting from a finished file
+            # (a partial file from an interrupted rerun already holds their fresh results).
+            drop = rerun if source == final_path else set()
+            records = [r for r in saved if not r.get("error") and r["id"] in order and r["id"] not in drop]
     done = {(r["id"], r["repeat"]) for r in records}
     todo = sum((c["id"], rep) not in done for c in cases for rep in range(repeats))
     if args.resume:
@@ -392,7 +413,9 @@ def main() -> None:
             s["leak_answer"] += rec["leak_answer"]
             s["leak_any"] += rec["leak_any"]
             s["errors"] += bool(rec.get("error"))
+    reruns = (previous_reruns if args.resume else []) + ([{"commit": COMMIT, "checks": sorted(rerun)}] if args.resume and rerun else [])
     health = {"mode": args.mode, "llm": config.LLM_PROVIDER, "llm_model": config.LLM_MODEL if config.LLM_PROVIDER != "mock" else None,
+              "commits": sorted({r.get("commit") or "unrecorded" for r in records}), "reruns": reruns,
               "egress_canary": not args.no_egress_canary, "repeats": repeats,
               "firewall": args.firewall if args.mode == "B2" else None}
     out = {"meta": health, "summary": summary, "records": records}
