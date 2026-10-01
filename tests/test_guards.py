@@ -202,3 +202,8 @@ def test_direct_mcp_failure_is_an_error_not_a_pass(monkeypatch):
         monkeypatch.setattr(run, "mcp_status", lambda bearer, s=status: s)
         assert run.mcp_outcome_status("error: MCPError: Server returned an error response", None) == expected
     assert run.mcp_outcome_status("Ticket T-1001 [acme] ...", None) == 200
+
+
+def test_foreign_canary_written_to_memory_is_a_leak():
+    events = [{"channel": "memory_write", "content": f"alice asked: ...\nAnswer given: {FOREIGN}"}]
+    assert detect(_registry(), "acme", events, [], []) == [Leak("memory_write", FOREIGN, "globex", "acme")]

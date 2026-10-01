@@ -5,8 +5,8 @@ depends on what the app or egress believe. Every channel is matched on decoded v
 (tenantguard.decode) in compacted form, so separators and encodings don't hide a hit.
 
 Rules per channel (the session tenant is the tenant the request ran as):
-  final_output, retrieval, cache_read, memory_read, tool_call, tool_response
-        -> leak if a canary owned by another tenant appears
+  final_output, retrieval, cache_read, cache_write, memory_read, memory_write, tool_call, tool_response
+        -> leak if a canary owned by another tenant appears (a write is where a later session reads it)
   log rows (from the DB diff)   -> leak if a canary's owner differs from the row's tenant tag
   notes rows (from the DB diff) -> leak if a canary's owner differs from the ticket's tenant, or if
                                    the session wrote a note on another tenant's ticket at all
@@ -34,7 +34,8 @@ import psycopg
 from app import config
 from tenantguard.decode import compact, compact_views
 
-SESSION_CHANNELS = ("final_output", "retrieval", "cache_read", "memory_read", "tool_call", "tool_response")
+SESSION_CHANNELS = ("final_output", "retrieval", "cache_read", "cache_write", "memory_read", "memory_write",
+                    "tool_call", "tool_response")
 _URL = re.compile(r"https?://[^\s)\]>\"']+", re.IGNORECASE)
 
 
