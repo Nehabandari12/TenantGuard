@@ -155,8 +155,10 @@ per check by default; pass `--repeats 3` to measure run-to-run variation.
   numbers for a real model are therefore a lower bound.
 - On a CPU-only machine Qwen3 4B takes about a minute per request, so the Qwen utility eval uses 15
   questions and 9 agent tasks per mode instead of 60 and 27.
-- There are no encoded or translated variants of the inputs yet. The detector and egress *do* decode
-  base64/hex/URL/reversed/split output.
+- There are no encoded or translated copies of the attack inputs. Neither input firewall caught even the
+  plain inputs, and B3 doesn't read the input to decide isolation, so they would change no result (see
+  [docs/DESIGN.md](docs/DESIGN.md#decided-against)). The detector and egress do decode base64, hex, URL,
+  reversed and split output.
 - B2 with Prompt Guard 2 ran on the mock only. It flags none of the inputs, so on Qwen it would take exactly
   the path the keyword-filter B2 took. The model runs directly through transformers; the llamafirewall
   package, which wraps it, also pulls in scanners B2 doesn't use.

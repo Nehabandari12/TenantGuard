@@ -213,13 +213,19 @@ attribution, but it wasn't needed. From the unlicensed ones only the ideas were 
 
 ## Not done yet
 
-- Input-side variants (base64, split and translated copies of each attack). Output-side decoding exists
-  and is tested.
 - Qwen runs with `--repeats 3` to measure run-to-run variation (`attacks.bench --repeats 3 --repeat-modes
   B0,B1,B2` adds them; about two days on this CPU).
 - B2 with Prompt Guard 2 on Qwen. It flags none of the inputs, so it would take the keyword-filter B2's path.
 
 ## Decided against
+
+**Encoded, split and translated copies of each attack input.** The plan added them so the input
+firewall's catch rate could be measured against obfuscation. But neither firewall caught a single plain
+input (Prompt Guard 2's highest score across all 278 was 0.18), so an encoded copy can't lower that rate
+any further. And B3 never decides isolation from the input text: the tenant comes from the token, and the
+database, cache, memory and tool server enforce it whatever the request says. Obfuscated output is a
+different matter, and it is covered: the detector and egress decode base64, hex, URL-encoding, ROT13,
+reversal and spacing, and match canaries split across replies.
 
 **A reviewer agent that approves each tool call.** It was the first item on the plan's cut list, and the
 results say it would change no number here. In B3 every tool call a planted instruction asked for either
