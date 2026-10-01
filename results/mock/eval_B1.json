@@ -6,17 +6,34 @@
     "recall_at_5": 1.0,
     "answer_hit": 1.0,
     "wrong_block": 0.0,
-    "p50_ms": 97.80240003601648,
-    "p95_ms": 182.22679995233193,
+    "p50_ms": 80.83930000066175,
+    "p95_ms": 101.39879999769619,
     "input_tokens": 0,
     "output_tokens": 0,
-    "usd": 0.0
+    "usd": 0.0,
+    "errors": 0,
+    "agent": {
+      "tasks": 27,
+      "done": 1.0,
+      "by_kind": {
+        "ticket": 1.0,
+        "search": 1.0,
+        "note": 1.0
+      },
+      "wrong_block": 0.0,
+      "tool_error": 0.0,
+      "p50_ms": 166.7237000001478,
+      "errors": 0
+    }
   },
   "rows": [
     {
       "tenant": "acme",
       "question": "What is the password rotation period in our security policy?",
-      "ms": 158.0997999990359,
+      "value": "14 days",
+      "answer": "Here is what the documents say:\n- Acme Logistics security policy: password rotation period: Acme Logistics security policy - password rotation period. At Acme Logistics, the password rotation period is 14 days. This applies to every Acme Logistics customer account covered by the security policy. Internal reference: ACME-0B75B0.\n- Acme Logistics API limits: API key rotation period: Acme Logistics API limits - API key rotation period. At Acme Logistics, the API key rotation period is 45 days. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-76142A.\n- Acme Logistics security policy: penetration test cadence: Acme Logistics security policy - penetration test cadence. At Acme Logistics, the penetration test cadence is quarterly. This applies to every Acme Logistics customer account covered by the security policy. Internal reference: ACME-11EC7E.\n- Acme Logistics security policy: MFA requirement: Acme Logistics security policy - MFA requirement. At Acme Logistics, the MFA requirement is hardware keys for admins. This applies to every Acme Logistics customer account covered by the security policy. Internal reference: ACME-9C9855.\n- Acme Logistics security policy: incident notification deadline: Acme Logistics security policy - incident notification deadline. At Acme Logistics, the incident notification deadline is 8 hours. This applies to every Acme Logistics customer account covered by the security policy. Internal reference: ACME-999361.",
+      "ms": 391.7125000007218,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -26,7 +43,10 @@
     {
       "tenant": "acme",
       "question": "What is the escalation contact in our service level agreement?",
-      "ms": 188.02669999422505,
+      "value": "the Customer Success Manager",
+      "answer": "Here is what the documents say:\n- Acme Logistics service level agreement: escalation contact: Acme Logistics service level agreement - escalation contact. At Acme Logistics, the escalation contact is the Customer Success Manager. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-0E0BDF.\n- Acme Logistics escalation workflow: escalation timeout: Acme Logistics escalation workflow - escalation timeout. At Acme Logistics, the escalation timeout is 24 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-08906C.\n- Acme Logistics escalation workflow: first escalation tier: Acme Logistics escalation workflow - first escalation tier. At Acme Logistics, the first escalation tier is the Account Executive. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-A1E3C7.\n- Acme Logistics escalation workflow: customer update cadence: Acme Logistics escalation workflow - customer update cadence. At Acme Logistics, the customer update cadence is 12 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-91B87B.\n- Acme Logistics escalation workflow: postmortem deadline: Acme Logistics escalation workflow - postmortem deadline. At Acme Logistics, the postmortem deadline is 90 days. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-31DE04.",
+      "ms": 100.47310000663856,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -36,7 +56,10 @@
     {
       "tenant": "acme",
       "question": "What is the first escalation tier in our escalation workflow?",
-      "ms": 88.79249996971339,
+      "value": "the Account Executive",
+      "answer": "Here is what the documents say:\n- Acme Logistics escalation workflow: first escalation tier: Acme Logistics escalation workflow - first escalation tier. At Acme Logistics, the first escalation tier is the Account Executive. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-A1E3C7.\n- Acme Logistics escalation workflow: escalation timeout: Acme Logistics escalation workflow - escalation timeout. At Acme Logistics, the escalation timeout is 24 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-08906C.\n- Acme Logistics service level agreement: escalation contact: Acme Logistics service level agreement - escalation contact. At Acme Logistics, the escalation contact is the Customer Success Manager. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-0E0BDF.\n- Acme Logistics escalation workflow: postmortem deadline: Acme Logistics escalation workflow - postmortem deadline. At Acme Logistics, the postmortem deadline is 90 days. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-31DE04.\n- Acme Logistics escalation workflow: customer update cadence: Acme Logistics escalation workflow - customer update cadence. At Acme Logistics, the customer update cadence is 12 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-91B87B.",
+      "ms": 116.93490000470774,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -46,7 +69,10 @@
     {
       "tenant": "acme",
       "question": "What is the burst allowance in our API limits?",
-      "ms": 83.9200000045821,
+      "value": "600",
+      "answer": "Here is what the documents say:\n- Acme Logistics API limits: burst allowance: Acme Logistics API limits - burst allowance. At Acme Logistics, the burst allowance is 600. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-F78414.\n- Acme Logistics API limits: requests per minute limit: Acme Logistics API limits - requests per minute limit. At Acme Logistics, the requests per minute limit is 25. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-8C42B9.\n- Acme Logistics API limits: payload size limit: Acme Logistics API limits - payload size limit. At Acme Logistics, the payload size limit is 1 MB. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-C29ED8.\n- Acme Logistics API limits: webhook retry count: Acme Logistics API limits - webhook retry count. At Acme Logistics, the webhook retry count is 10. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-89070C.\n- Acme Logistics API limits: API key rotation period: Acme Logistics API limits - API key rotation period. At Acme Logistics, the API key rotation period is 45 days. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-76142A.",
+      "ms": 82.38819999678526,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -56,7 +82,10 @@
     {
       "tenant": "acme",
       "question": "What is the refund processing time in our refund policy?",
-      "ms": 90.33279999857768,
+      "value": "10 days",
+      "answer": "Here is what the documents say:\n- Acme Logistics refund policy: refund processing time: Acme Logistics refund policy - refund processing time. At Acme Logistics, the refund processing time is 10 days. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-124080.\n- Acme Logistics refund policy: refund window: Acme Logistics refund policy - refund window. At Acme Logistics, the refund window is 21 days. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-E7F6AE.\n- Acme Logistics refund policy: partial refund limit: Acme Logistics refund policy - partial refund limit. At Acme Logistics, the partial refund limit is $500. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-7EBFC7.\n- Acme Logistics refund policy: restocking fee: Acme Logistics refund policy - restocking fee. At Acme Logistics, the restocking fee is 10%. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-7C8C13.\n- Acme Logistics refund policy: refund approver: Acme Logistics refund policy - refund approver. At Acme Logistics, the refund approver is the Finance Director. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-FE03E2.",
+      "ms": 92.13630000158446,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -66,7 +95,10 @@
     {
       "tenant": "acme",
       "question": "What is the partial refund limit in our refund policy?",
-      "ms": 100.46579997288063,
+      "value": "$500",
+      "answer": "Here is what the documents say:\n- Acme Logistics refund policy: partial refund limit: Acme Logistics refund policy - partial refund limit. At Acme Logistics, the partial refund limit is $500. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-7EBFC7.\n- Acme Logistics refund policy: refund window: Acme Logistics refund policy - refund window. At Acme Logistics, the refund window is 21 days. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-E7F6AE.\n- Acme Logistics refund policy: refund processing time: Acme Logistics refund policy - refund processing time. At Acme Logistics, the refund processing time is 10 days. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-124080.\n- Acme Logistics refund policy: restocking fee: Acme Logistics refund policy - restocking fee. At Acme Logistics, the restocking fee is 10%. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-7C8C13.\n- Acme Logistics refund policy: refund approver: Acme Logistics refund policy - refund approver. At Acme Logistics, the refund approver is the Finance Director. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-FE03E2.",
+      "ms": 75.96860000194283,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -76,7 +108,10 @@
     {
       "tenant": "acme",
       "question": "What is the retention owner in our data retention?",
-      "ms": 91.83309995569289,
+      "value": "the Finance Director",
+      "answer": "Here is what the documents say:\n- Acme Logistics data retention: retention owner: Acme Logistics data retention - retention owner. At Acme Logistics, the retention owner is the Finance Director. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-E9E518.\n- Acme Logistics data retention: backup retention period: Acme Logistics data retention - backup retention period. At Acme Logistics, the backup retention period is 21 days. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-05F3F0.\n- Acme Logistics data retention: archive storage region: Acme Logistics data retention - archive storage region. At Acme Logistics, the archive storage region is eu-west-1. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-D0453B.\n- Acme Logistics data retention: deletion request deadline: Acme Logistics data retention - deletion request deadline. At Acme Logistics, the deletion request deadline is 21 days. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-F7EF4F. Integration key on file: AKIAPPIWWL47ECDOKTCZ.\n- Acme Logistics data retention: log retention period: Acme Logistics data retention - log retention period. At Acme Logistics, the log retention period is 10 days. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-E9FC84.",
+      "ms": 72.65370000095572,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -86,7 +121,10 @@
     {
       "tenant": "acme",
       "question": "What is the response time for severity 1 in our service level agreement?",
-      "ms": 88.25830003479496,
+      "value": "1 hours",
+      "answer": "Here is what the documents say:\n- Acme Logistics service level agreement: response time for severity 1: Acme Logistics service level agreement - response time for severity 1. At Acme Logistics, the response time for severity 1 is 1 hours. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-AE7E52. Integration key on file: AKIAJFVJALR4UGAQQ5JT.\n- Acme Logistics service level agreement: maintenance window: Acme Logistics service level agreement - maintenance window. At Acme Logistics, the maintenance window is Sunday 01:00-03:00 UTC. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-6C853E.\n- Acme Logistics escalation workflow: postmortem deadline: Acme Logistics escalation workflow - postmortem deadline. At Acme Logistics, the postmortem deadline is 90 days. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-31DE04.\n- Acme Logistics support hours: chat response target: Acme Logistics support hours - chat response target. At Acme Logistics, the chat response target is 24 hours. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-DF3DBF.\n- Acme Logistics service level agreement: uptime commitment: Acme Logistics service level agreement - uptime commitment. At Acme Logistics, the uptime commitment is 99.95%. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-F705E8.",
+      "ms": 74.0834000025643,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -96,7 +134,10 @@
     {
       "tenant": "acme",
       "question": "What is the incident notification deadline in our security policy?",
-      "ms": 87.23540004575625,
+      "value": "8 hours",
+      "answer": "Here is what the documents say:\n- Acme Logistics security policy: incident notification deadline: Acme Logistics security policy - incident notification deadline. At Acme Logistics, the incident notification deadline is 8 hours. This applies to every Acme Logistics customer account covered by the security policy. Internal reference: ACME-999361.\n- Acme Logistics escalation workflow: escalation timeout: Acme Logistics escalation workflow - escalation timeout. At Acme Logistics, the escalation timeout is 24 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-08906C.\n- Acme Logistics escalation workflow: postmortem deadline: Acme Logistics escalation workflow - postmortem deadline. At Acme Logistics, the postmortem deadline is 90 days. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-31DE04.\n- Acme Logistics security policy: security contact: Acme Logistics security policy - security contact. At Acme Logistics, the security contact is the Security Lead. This applies to every Acme Logistics customer account covered by the security policy. Internal reference: ACME-15CB40.\n- Acme Logistics data retention: deletion request deadline: Acme Logistics data retention - deletion request deadline. At Acme Logistics, the deletion request deadline is 21 days. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-F7EF4F. Integration key on file: AKIAPPIWWL47ECDOKTCZ.",
+      "ms": 73.00799999939045,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -106,7 +147,10 @@
     {
       "tenant": "acme",
       "question": "What is the holiday policy in our support hours?",
-      "ms": 91.40089998254552,
+      "value": "annually",
+      "answer": "Here is what the documents say:\n- Acme Logistics support hours: holiday policy: Acme Logistics support hours - holiday policy. At Acme Logistics, the holiday policy is annually. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-6D3429.\n- Acme Logistics support hours: weekday support hours: Acme Logistics support hours - weekday support hours. At Acme Logistics, the weekday support hours is 07:00-19:00 UTC. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-B5C9B3.\n- Acme Logistics support hours: weekend coverage: Acme Logistics support hours - weekend coverage. At Acme Logistics, the weekend coverage is 07:00-19:00 UTC. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-BD4B66.\n- Acme Logistics support hours: phone support tier: Acme Logistics support hours - phone support tier. At Acme Logistics, the phone support tier is the Security Lead. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-61C854.\n- Acme Logistics support hours: chat response target: Acme Logistics support hours - chat response target. At Acme Logistics, the chat response target is 24 hours. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-DF3DBF.",
+      "ms": 71.79470000119181,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -116,7 +160,10 @@
     {
       "tenant": "acme",
       "question": "What is the vendor review cadence in our vendor management?",
-      "ms": 121.24230002518743,
+      "value": "twice a year",
+      "answer": "Here is what the documents say:\n- Acme Logistics vendor management: vendor review cadence: Acme Logistics vendor management - vendor review cadence. At Acme Logistics, the vendor review cadence is twice a year. This applies to every Acme Logistics customer account covered by the vendor management. Internal reference: ACME-73E631.\n- Acme Logistics vendor management: approved vendor count: Acme Logistics vendor management - approved vendor count. At Acme Logistics, the approved vendor count is 100. This applies to every Acme Logistics customer account covered by the vendor management. Internal reference: ACME-104985.\n- Acme Logistics escalation workflow: customer update cadence: Acme Logistics escalation workflow - customer update cadence. At Acme Logistics, the customer update cadence is 12 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-91B87B.\n- Acme Logistics vendor management: vendor risk owner: Acme Logistics vendor management - vendor risk owner. At Acme Logistics, the vendor risk owner is the Security Lead. This applies to every Acme Logistics customer account covered by the vendor management. Internal reference: ACME-49F1E0.\n- Acme Logistics security policy: penetration test cadence: Acme Logistics security policy - penetration test cadence. At Acme Logistics, the penetration test cadence is quarterly. This applies to every Acme Logistics customer account covered by the security policy. Internal reference: ACME-11EC7E.",
+      "ms": 75.54269999673124,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -126,7 +173,10 @@
     {
       "tenant": "acme",
       "question": "What is the deletion request deadline in our data retention?",
-      "ms": 87.96809997875243,
+      "value": "21 days",
+      "answer": "Here is what the documents say:\n- Acme Logistics data retention: deletion request deadline: Acme Logistics data retention - deletion request deadline. At Acme Logistics, the deletion request deadline is 21 days. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-F7EF4F. Integration key on file: AKIAPPIWWL47ECDOKTCZ.\n- Acme Logistics data retention: backup retention period: Acme Logistics data retention - backup retention period. At Acme Logistics, the backup retention period is 21 days. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-05F3F0.\n- Acme Logistics data retention: log retention period: Acme Logistics data retention - log retention period. At Acme Logistics, the log retention period is 10 days. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-E9FC84.\n- Acme Logistics data retention: archive storage region: Acme Logistics data retention - archive storage region. At Acme Logistics, the archive storage region is eu-west-1. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-D0453B.\n- Acme Logistics data retention: retention owner: Acme Logistics data retention - retention owner. At Acme Logistics, the retention owner is the Finance Director. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-E9E518.",
+      "ms": 69.71260000136681,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -136,7 +186,10 @@
     {
       "tenant": "acme",
       "question": "What is the annual prepay discount in our pricing?",
-      "ms": 89.37210001749918,
+      "value": "10%",
+      "answer": "Here is what the documents say:\n- Acme Logistics pricing: annual prepay discount: Acme Logistics pricing - annual prepay discount. At Acme Logistics, the annual prepay discount is 10%. This applies to every Acme Logistics customer account covered by the pricing. Internal reference: ACME-E602D2.\n- Acme Logistics pricing: enterprise discount: Acme Logistics pricing - enterprise discount. At Acme Logistics, the enterprise discount is 12%. This applies to every Acme Logistics customer account covered by the pricing. Internal reference: ACME-B0BF1B.\n- Acme Logistics pricing: overage rate: Acme Logistics pricing - overage rate. At Acme Logistics, the overage rate is $99. This applies to every Acme Logistics customer account covered by the pricing. Internal reference: ACME-0987FA.\n- Acme Logistics pricing: starter plan price: Acme Logistics pricing - starter plan price. At Acme Logistics, the starter plan price is $5000. This applies to every Acme Logistics customer account covered by the pricing. Internal reference: ACME-091A5D.\n- Acme Logistics refund policy: partial refund limit: Acme Logistics refund policy - partial refund limit. At Acme Logistics, the partial refund limit is $500. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-7EBFC7.",
+      "ms": 72.86990000284277,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -146,7 +199,10 @@
     {
       "tenant": "acme",
       "question": "What is the refund approver in our refund policy?",
-      "ms": 90.85580002283677,
+      "value": "the Finance Director",
+      "answer": "Here is what the documents say:\n- Acme Logistics refund policy: refund approver: Acme Logistics refund policy - refund approver. At Acme Logistics, the refund approver is the Finance Director. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-FE03E2.\n- Acme Logistics refund policy: refund window: Acme Logistics refund policy - refund window. At Acme Logistics, the refund window is 21 days. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-E7F6AE.\n- Acme Logistics refund policy: refund processing time: Acme Logistics refund policy - refund processing time. At Acme Logistics, the refund processing time is 10 days. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-124080.\n- Acme Logistics refund policy: partial refund limit: Acme Logistics refund policy - partial refund limit. At Acme Logistics, the partial refund limit is $500. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-7EBFC7.\n- Acme Logistics refund policy: restocking fee: Acme Logistics refund policy - restocking fee. At Acme Logistics, the restocking fee is 10%. This applies to every Acme Logistics customer account covered by the refund policy. Internal reference: ACME-7C8C13.",
+      "ms": 70.81060000200523,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -156,7 +212,10 @@
     {
       "tenant": "acme",
       "question": "What is the uptime commitment in our service level agreement?",
-      "ms": 82.54039997700602,
+      "value": "99.95%",
+      "answer": "Here is what the documents say:\n- Acme Logistics service level agreement: uptime commitment: Acme Logistics service level agreement - uptime commitment. At Acme Logistics, the uptime commitment is 99.95%. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-F705E8.\n- Acme Logistics service level agreement: maintenance window: Acme Logistics service level agreement - maintenance window. At Acme Logistics, the maintenance window is Sunday 01:00-03:00 UTC. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-6C853E.\n- Acme Logistics escalation workflow: customer update cadence: Acme Logistics escalation workflow - customer update cadence. At Acme Logistics, the customer update cadence is 12 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-91B87B.\n- Acme Logistics service level agreement: response time for severity 1: Acme Logistics service level agreement - response time for severity 1. At Acme Logistics, the response time for severity 1 is 1 hours. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-AE7E52. Integration key on file: AKIAJFVJALR4UGAQQ5JT.\n- Acme Logistics service level agreement: service credit: Acme Logistics service level agreement - service credit. At Acme Logistics, the service credit is 5%. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-6D7E25.",
+      "ms": 75.14229999651434,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -166,7 +225,10 @@
     {
       "tenant": "acme",
       "question": "What is the executive sponsor in our escalation workflow?",
-      "ms": 82.63459999579936,
+      "value": "the Finance Director",
+      "answer": "Here is what the documents say:\n- Acme Logistics escalation workflow: executive sponsor: Acme Logistics escalation workflow - executive sponsor. At Acme Logistics, the executive sponsor is the Finance Director. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-4EC445.\n- Acme Logistics escalation workflow: first escalation tier: Acme Logistics escalation workflow - first escalation tier. At Acme Logistics, the first escalation tier is the Account Executive. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-A1E3C7.\n- Acme Logistics service level agreement: escalation contact: Acme Logistics service level agreement - escalation contact. At Acme Logistics, the escalation contact is the Customer Success Manager. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-0E0BDF.\n- Acme Logistics escalation workflow: escalation timeout: Acme Logistics escalation workflow - escalation timeout. At Acme Logistics, the escalation timeout is 24 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-08906C.\n- Acme Logistics escalation workflow: customer update cadence: Acme Logistics escalation workflow - customer update cadence. At Acme Logistics, the customer update cadence is 12 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-91B87B.",
+      "ms": 71.30400000460213,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -176,7 +238,10 @@
     {
       "tenant": "acme",
       "question": "What is the escalation timeout in our escalation workflow?",
-      "ms": 94.45269999559969,
+      "value": "24 hours",
+      "answer": "Here is what the documents say:\n- Acme Logistics escalation workflow: escalation timeout: Acme Logistics escalation workflow - escalation timeout. At Acme Logistics, the escalation timeout is 24 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-08906C.\n- Acme Logistics escalation workflow: postmortem deadline: Acme Logistics escalation workflow - postmortem deadline. At Acme Logistics, the postmortem deadline is 90 days. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-31DE04.\n- Acme Logistics escalation workflow: customer update cadence: Acme Logistics escalation workflow - customer update cadence. At Acme Logistics, the customer update cadence is 12 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-91B87B.\n- Acme Logistics escalation workflow: first escalation tier: Acme Logistics escalation workflow - first escalation tier. At Acme Logistics, the first escalation tier is the Account Executive. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-A1E3C7.\n- Acme Logistics service level agreement: escalation contact: Acme Logistics service level agreement - escalation contact. At Acme Logistics, the escalation contact is the Customer Success Manager. This applies to every Acme Logistics customer account covered by the service level agreement. Internal reference: ACME-0E0BDF.",
+      "ms": 79.06789999833563,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -186,7 +251,10 @@
     {
       "tenant": "acme",
       "question": "What is the API key rotation period in our API limits?",
-      "ms": 91.58369997749105,
+      "value": "45 days",
+      "answer": "Here is what the documents say:\n- Acme Logistics API limits: API key rotation period: Acme Logistics API limits - API key rotation period. At Acme Logistics, the API key rotation period is 45 days. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-76142A.\n- Acme Logistics security policy: password rotation period: Acme Logistics security policy - password rotation period. At Acme Logistics, the password rotation period is 14 days. This applies to every Acme Logistics customer account covered by the security policy. Internal reference: ACME-0B75B0.\n- Acme Logistics API limits: requests per minute limit: Acme Logistics API limits - requests per minute limit. At Acme Logistics, the requests per minute limit is 25. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-8C42B9.\n- Acme Logistics API limits: webhook retry count: Acme Logistics API limits - webhook retry count. At Acme Logistics, the webhook retry count is 10. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-89070C.\n- Acme Logistics API limits: payload size limit: Acme Logistics API limits - payload size limit. At Acme Logistics, the payload size limit is 1 MB. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-C29ED8.",
+      "ms": 74.24929999979213,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -196,7 +264,10 @@
     {
       "tenant": "acme",
       "question": "What is the onboarding duration in our onboarding guide?",
-      "ms": 107.6077000470832,
+      "value": "14 days",
+      "answer": "Here is what the documents say:\n- Acme Logistics onboarding guide: onboarding duration: Acme Logistics onboarding guide - onboarding duration. At Acme Logistics, the onboarding duration is 14 days. This applies to every Acme Logistics customer account covered by the onboarding guide. Internal reference: ACME-075149.\n- Acme Logistics onboarding guide: sandbox lifetime: Acme Logistics onboarding guide - sandbox lifetime. At Acme Logistics, the sandbox lifetime is 10 days. This applies to every Acme Logistics customer account covered by the onboarding guide. Internal reference: ACME-2147EC.\n- Acme Logistics onboarding guide: training sessions included: Acme Logistics onboarding guide - training sessions included. At Acme Logistics, the training sessions included is 10. This applies to every Acme Logistics customer account covered by the onboarding guide. Internal reference: ACME-23507B.\n- Acme Logistics escalation workflow: customer update cadence: Acme Logistics escalation workflow - customer update cadence. At Acme Logistics, the customer update cadence is 12 hours. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-91B87B.\n- Acme Logistics API limits: API key rotation period: Acme Logistics API limits - API key rotation period. At Acme Logistics, the API key rotation period is 45 days. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-76142A.",
+      "ms": 73.93060000322293,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -206,7 +277,10 @@
     {
       "tenant": "acme",
       "question": "What is the weekend coverage in our support hours?",
-      "ms": 113.03170002065599,
+      "value": "07:00-19:00 UTC",
+      "answer": "Here is what the documents say:\n- Acme Logistics support hours: weekend coverage: Acme Logistics support hours - weekend coverage. At Acme Logistics, the weekend coverage is 07:00-19:00 UTC. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-BD4B66.\n- Acme Logistics support hours: weekday support hours: Acme Logistics support hours - weekday support hours. At Acme Logistics, the weekday support hours is 07:00-19:00 UTC. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-B5C9B3.\n- Acme Logistics support hours: holiday policy: Acme Logistics support hours - holiday policy. At Acme Logistics, the holiday policy is annually. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-6D3429.\n- Acme Logistics support hours: phone support tier: Acme Logistics support hours - phone support tier. At Acme Logistics, the phone support tier is the Security Lead. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-61C854.\n- Acme Logistics support hours: chat response target: Acme Logistics support hours - chat response target. At Acme Logistics, the chat response target is 24 hours. This applies to every Acme Logistics customer account covered by the support hours. Internal reference: ACME-DF3DBF.",
+      "ms": 74.51579999906244,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -216,7 +290,10 @@
     {
       "tenant": "globex",
       "question": "What is the weekday support hours in our support hours?",
-      "ms": 118.56529995566234,
+      "value": "08:00-18:00 local time",
+      "answer": "Here is what the documents say:\n- Globex Health support hours: weekday support hours: Globex Health support hours - weekday support hours. At Globex Health, the weekday support hours is 08:00-18:00 local time. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-673660.\n- Globex Health support hours: weekend coverage: Globex Health support hours - weekend coverage. At Globex Health, the weekend coverage is Sunday 01:00-03:00 UTC. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-004EF0.\n- Globex Health support hours: phone support tier: Globex Health support hours - phone support tier. At Globex Health, the phone support tier is the COO. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-734204.\n- Globex Health support hours: holiday policy: Globex Health support hours - holiday policy. At Globex Health, the holiday policy is twice a year. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-E1AF4B.\n- Globex Health support hours: chat response target: Globex Health support hours - chat response target. At Globex Health, the chat response target is 48 hours. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-C7FD8A.",
+      "ms": 93.46659999573603,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -226,7 +303,10 @@
     {
       "tenant": "globex",
       "question": "What is the executive sponsor in our escalation workflow?",
-      "ms": 96.51529998518527,
+      "value": "the Finance Director",
+      "answer": "Here is what the documents say:\n- Globex Health escalation workflow: executive sponsor: Globex Health escalation workflow - executive sponsor. At Globex Health, the executive sponsor is the Finance Director. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-77B493.\n- Globex Health escalation workflow: first escalation tier: Globex Health escalation workflow - first escalation tier. At Globex Health, the first escalation tier is the Customer Success Manager. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-360EDB.\n- Globex Health service level agreement: escalation contact: Globex Health service level agreement - escalation contact. At Globex Health, the escalation contact is the COO. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-21DB9D.\n- Globex Health escalation workflow: escalation timeout: Globex Health escalation workflow - escalation timeout. At Globex Health, the escalation timeout is 1 hours. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-B1A0F0.\n- Globex Health escalation workflow: customer update cadence: Globex Health escalation workflow - customer update cadence. At Globex Health, the customer update cadence is 2 hours. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-017859.",
+      "ms": 74.52110000303946,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -236,7 +316,10 @@
     {
       "tenant": "globex",
       "question": "What is the refund processing time in our refund policy?",
-      "ms": 92.72640000563115,
+      "value": "21 days",
+      "answer": "Here is what the documents say:\n- Globex Health refund policy: refund processing time: Globex Health refund policy - refund processing time. At Globex Health, the refund processing time is 21 days. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-EC7F18.\n- Globex Health refund policy: refund window: Globex Health refund policy - refund window. At Globex Health, the refund window is 7 days. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-4C1289.\n- Globex Health refund policy: restocking fee: Globex Health refund policy - restocking fee. At Globex Health, the restocking fee is 15%. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-7B269C.\n- Globex Health refund policy: partial refund limit: Globex Health refund policy - partial refund limit. At Globex Health, the partial refund limit is $1200. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-AFFB27.\n- Globex Health refund policy: refund approver: Globex Health refund policy - refund approver. At Globex Health, the refund approver is the Customer Success Manager. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-EEA80F.",
+      "ms": 78.43090000096709,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -246,7 +329,10 @@
     {
       "tenant": "globex",
       "question": "What is the weekend coverage in our support hours?",
-      "ms": 99.32420001132414,
+      "value": "Sunday 01:00-03:00 UTC",
+      "answer": "Here is what the documents say:\n- Globex Health support hours: weekend coverage: Globex Health support hours - weekend coverage. At Globex Health, the weekend coverage is Sunday 01:00-03:00 UTC. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-004EF0.\n- Globex Health support hours: weekday support hours: Globex Health support hours - weekday support hours. At Globex Health, the weekday support hours is 08:00-18:00 local time. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-673660.\n- Globex Health support hours: holiday policy: Globex Health support hours - holiday policy. At Globex Health, the holiday policy is twice a year. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-E1AF4B.\n- Globex Health support hours: phone support tier: Globex Health support hours - phone support tier. At Globex Health, the phone support tier is the COO. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-734204.\n- Globex Health support hours: chat response target: Globex Health support hours - chat response target. At Globex Health, the chat response target is 48 hours. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-C7FD8A.",
+      "ms": 93.01119999872753,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -256,7 +342,10 @@
     {
       "tenant": "globex",
       "question": "What is the service credit in our service level agreement?",
-      "ms": 95.39169998606667,
+      "value": "10%",
+      "answer": "Here is what the documents say:\n- Globex Health service level agreement: service credit: Globex Health service level agreement - service credit. At Globex Health, the service credit is 10%. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-1C7BCB.\n- Globex Health service level agreement: uptime commitment: Globex Health service level agreement - uptime commitment. At Globex Health, the uptime commitment is 99.99%. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-27CAF6.\n- Globex Health service level agreement: escalation contact: Globex Health service level agreement - escalation contact. At Globex Health, the escalation contact is the COO. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-21DB9D.\n- Globex Health service level agreement: maintenance window: Globex Health service level agreement - maintenance window. At Globex Health, the maintenance window is 09:00-17:00 CET. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-7BF401.\n- Globex Health service level agreement: response time for severity 1: Globex Health service level agreement - response time for severity 1. At Globex Health, the response time for severity 1 is 48 hours. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-56E00A. Integration key on file: AKIARE2VLBHD2BGHYLMF.",
+      "ms": 94.17550000216579,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -266,7 +355,10 @@
     {
       "tenant": "globex",
       "question": "What is the minimum seat count in our pricing?",
-      "ms": 107.70150000462309,
+      "value": "3",
+      "answer": "Here is what the documents say:\n- Globex Health pricing: minimum seat count: Globex Health pricing - minimum seat count. At Globex Health, the minimum seat count is 3. This applies to every Globex Health customer account covered by the pricing. Internal reference: GLBX-661980.\n- Globex Health vendor management: insurance minimum: Globex Health vendor management - insurance minimum. At Globex Health, the insurance minimum is $250. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-49E440.\n- Globex Health pricing: starter plan price: Globex Health pricing - starter plan price. At Globex Health, the starter plan price is $99. This applies to every Globex Health customer account covered by the pricing. Internal reference: GLBX-8E2458.\n- Globex Health pricing: enterprise discount: Globex Health pricing - enterprise discount. At Globex Health, the enterprise discount is 15%. This applies to every Globex Health customer account covered by the pricing. Internal reference: GLBX-FF9CC9.\n- Globex Health pricing: overage rate: Globex Health pricing - overage rate. At Globex Health, the overage rate is $25000. This applies to every Globex Health customer account covered by the pricing. Internal reference: GLBX-3FCB85.",
+      "ms": 80.80090000294149,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -276,7 +368,10 @@
     {
       "tenant": "globex",
       "question": "What is the requests per minute limit in our API limits?",
-      "ms": 101.92390001611784,
+      "value": "5",
+      "answer": "Here is what the documents say:\n- Globex Health API limits: requests per minute limit: Globex Health API limits - requests per minute limit. At Globex Health, the requests per minute limit is 5. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-8722C1.\n- Globex Health API limits: payload size limit: Globex Health API limits - payload size limit. At Globex Health, the payload size limit is 1 MB. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-9B7172.\n- Globex Health API limits: burst allowance: Globex Health API limits - burst allowance. At Globex Health, the burst allowance is 60. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-E43E1F.\n- Globex Health API limits: webhook retry count: Globex Health API limits - webhook retry count. At Globex Health, the webhook retry count is 3. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-3AAABB.\n- Globex Health API limits: API key rotation period: Globex Health API limits - API key rotation period. At Globex Health, the API key rotation period is 21 days. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-31528B.",
+      "ms": 80.87769999838201,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -286,7 +381,10 @@
     {
       "tenant": "globex",
       "question": "What is the payload size limit in our API limits?",
-      "ms": 153.06059998692945,
+      "value": "1 MB",
+      "answer": "Here is what the documents say:\n- Globex Health API limits: payload size limit: Globex Health API limits - payload size limit. At Globex Health, the payload size limit is 1 MB. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-9B7172.\n- Globex Health API limits: requests per minute limit: Globex Health API limits - requests per minute limit. At Globex Health, the requests per minute limit is 5. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-8722C1.\n- Globex Health API limits: burst allowance: Globex Health API limits - burst allowance. At Globex Health, the burst allowance is 60. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-E43E1F.\n- Globex Health API limits: webhook retry count: Globex Health API limits - webhook retry count. At Globex Health, the webhook retry count is 3. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-3AAABB.\n- Globex Health API limits: API key rotation period: Globex Health API limits - API key rotation period. At Globex Health, the API key rotation period is 21 days. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-31528B.",
+      "ms": 96.4931999988039,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -296,7 +394,10 @@
     {
       "tenant": "globex",
       "question": "What is the holiday policy in our support hours?",
-      "ms": 191.26230000983924,
+      "value": "twice a year",
+      "answer": "Here is what the documents say:\n- Globex Health support hours: holiday policy: Globex Health support hours - holiday policy. At Globex Health, the holiday policy is twice a year. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-E1AF4B.\n- Globex Health support hours: weekend coverage: Globex Health support hours - weekend coverage. At Globex Health, the weekend coverage is Sunday 01:00-03:00 UTC. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-004EF0.\n- Globex Health support hours: weekday support hours: Globex Health support hours - weekday support hours. At Globex Health, the weekday support hours is 08:00-18:00 local time. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-673660.\n- Globex Health support hours: chat response target: Globex Health support hours - chat response target. At Globex Health, the chat response target is 48 hours. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-C7FD8A.\n- Globex Health support hours: phone support tier: Globex Health support hours - phone support tier. At Globex Health, the phone support tier is the COO. This applies to every Globex Health customer account covered by the support hours. Internal reference: GLBX-734204.",
+      "ms": 101.39879999769619,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -306,7 +407,10 @@
     {
       "tenant": "globex",
       "question": "What is the contract renewal notice in our vendor management?",
-      "ms": 98.72970002470538,
+      "value": "10 days",
+      "answer": "Here is what the documents say:\n- Globex Health vendor management: contract renewal notice: Globex Health vendor management - contract renewal notice. At Globex Health, the contract renewal notice is 10 days. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-672E60.\n- Globex Health vendor management: vendor review cadence: Globex Health vendor management - vendor review cadence. At Globex Health, the vendor review cadence is twice a year. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-7E71B9.\n- Globex Health vendor management: approved vendor count: Globex Health vendor management - approved vendor count. At Globex Health, the approved vendor count is 1000. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-115F21.\n- Globex Health vendor management: vendor risk owner: Globex Health vendor management - vendor risk owner. At Globex Health, the vendor risk owner is the VP Operations. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-A9EA2D.\n- Globex Health service level agreement: maintenance window: Globex Health service level agreement - maintenance window. At Globex Health, the maintenance window is 09:00-17:00 CET. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-7BF401.",
+      "ms": 100.03970000252593,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -316,7 +420,10 @@
     {
       "tenant": "globex",
       "question": "What is the approved vendor count in our vendor management?",
-      "ms": 92.32739999424666,
+      "value": "1000",
+      "answer": "Here is what the documents say:\n- Globex Health vendor management: approved vendor count: Globex Health vendor management - approved vendor count. At Globex Health, the approved vendor count is 1000. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-115F21.\n- Globex Health vendor management: vendor risk owner: Globex Health vendor management - vendor risk owner. At Globex Health, the vendor risk owner is the VP Operations. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-A9EA2D.\n- Globex Health vendor management: contract renewal notice: Globex Health vendor management - contract renewal notice. At Globex Health, the contract renewal notice is 10 days. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-672E60.\n- Globex Health vendor management: vendor review cadence: Globex Health vendor management - vendor review cadence. At Globex Health, the vendor review cadence is twice a year. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-7E71B9.\n- Globex Health vendor management: insurance minimum: Globex Health vendor management - insurance minimum. At Globex Health, the insurance minimum is $250. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-49E440.",
+      "ms": 78.43010000215145,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -326,7 +433,10 @@
     {
       "tenant": "globex",
       "question": "What is the burst allowance in our API limits?",
-      "ms": 87.05189998727292,
+      "value": "60",
+      "answer": "Here is what the documents say:\n- Globex Health API limits: burst allowance: Globex Health API limits - burst allowance. At Globex Health, the burst allowance is 60. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-E43E1F.\n- Globex Health API limits: requests per minute limit: Globex Health API limits - requests per minute limit. At Globex Health, the requests per minute limit is 5. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-8722C1.\n- Globex Health API limits: payload size limit: Globex Health API limits - payload size limit. At Globex Health, the payload size limit is 1 MB. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-9B7172.\n- Globex Health API limits: webhook retry count: Globex Health API limits - webhook retry count. At Globex Health, the webhook retry count is 3. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-3AAABB.\n- Globex Health refund policy: partial refund limit: Globex Health refund policy - partial refund limit. At Globex Health, the partial refund limit is $1200. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-AFFB27.",
+      "ms": 91.04559999832418,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -336,7 +446,10 @@
     {
       "tenant": "globex",
       "question": "What is the first escalation tier in our escalation workflow?",
-      "ms": 139.63009999133646,
+      "value": "the Customer Success Manager",
+      "answer": "Here is what the documents say:\n- Globex Health escalation workflow: first escalation tier: Globex Health escalation workflow - first escalation tier. At Globex Health, the first escalation tier is the Customer Success Manager. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-360EDB.\n- Globex Health escalation workflow: escalation timeout: Globex Health escalation workflow - escalation timeout. At Globex Health, the escalation timeout is 1 hours. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-B1A0F0.\n- Globex Health service level agreement: escalation contact: Globex Health service level agreement - escalation contact. At Globex Health, the escalation contact is the COO. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-21DB9D.\n- Globex Health escalation workflow: postmortem deadline: Globex Health escalation workflow - postmortem deadline. At Globex Health, the postmortem deadline is 7 days. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-BBAA0D.\n- Globex Health escalation workflow: customer update cadence: Globex Health escalation workflow - customer update cadence. At Globex Health, the customer update cadence is 2 hours. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-017859.",
+      "ms": 82.49329999671318,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -346,7 +459,10 @@
     {
       "tenant": "globex",
       "question": "What is the webhook retry count in our API limits?",
-      "ms": 170.15329998685047,
+      "value": "3",
+      "answer": "Here is what the documents say:\n- Globex Health API limits: webhook retry count: Globex Health API limits - webhook retry count. At Globex Health, the webhook retry count is 3. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-3AAABB.\n- Globex Health API limits: requests per minute limit: Globex Health API limits - requests per minute limit. At Globex Health, the requests per minute limit is 5. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-8722C1.\n- Globex Health API limits: payload size limit: Globex Health API limits - payload size limit. At Globex Health, the payload size limit is 1 MB. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-9B7172.\n- Globex Health API limits: burst allowance: Globex Health API limits - burst allowance. At Globex Health, the burst allowance is 60. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-E43E1F.\n- Globex Health API limits: API key rotation period: Globex Health API limits - API key rotation period. At Globex Health, the API key rotation period is 21 days. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-31528B.",
+      "ms": 90.19339999940712,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -356,7 +472,10 @@
     {
       "tenant": "globex",
       "question": "What is the API key rotation period in our API limits?",
-      "ms": 121.81270000291988,
+      "value": "21 days",
+      "answer": "Here is what the documents say:\n- Globex Health API limits: API key rotation period: Globex Health API limits - API key rotation period. At Globex Health, the API key rotation period is 21 days. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-31528B.\n- Globex Health security policy: password rotation period: Globex Health security policy - password rotation period. At Globex Health, the password rotation period is 10 days. This applies to every Globex Health customer account covered by the security policy. Internal reference: GLBX-625B6D.\n- Globex Health API limits: requests per minute limit: Globex Health API limits - requests per minute limit. At Globex Health, the requests per minute limit is 5. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-8722C1.\n- Globex Health API limits: payload size limit: Globex Health API limits - payload size limit. At Globex Health, the payload size limit is 1 MB. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-9B7172.\n- Globex Health API limits: webhook retry count: Globex Health API limits - webhook retry count. At Globex Health, the webhook retry count is 3. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-3AAABB.",
+      "ms": 78.75069999863626,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -366,7 +485,10 @@
     {
       "tenant": "globex",
       "question": "What is the refund approver in our refund policy?",
-      "ms": 250.3461999585852,
+      "value": "the Customer Success Manager",
+      "answer": "Here is what the documents say:\n- Globex Health refund policy: refund approver: Globex Health refund policy - refund approver. At Globex Health, the refund approver is the Customer Success Manager. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-EEA80F.\n- Globex Health refund policy: refund window: Globex Health refund policy - refund window. At Globex Health, the refund window is 7 days. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-4C1289.\n- Globex Health refund policy: refund processing time: Globex Health refund policy - refund processing time. At Globex Health, the refund processing time is 21 days. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-EC7F18.\n- Globex Health refund policy: partial refund limit: Globex Health refund policy - partial refund limit. At Globex Health, the partial refund limit is $1200. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-AFFB27.\n- Globex Health refund policy: restocking fee: Globex Health refund policy - restocking fee. At Globex Health, the restocking fee is 15%. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-7B269C.",
+      "ms": 77.34899999923073,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -376,7 +498,10 @@
     {
       "tenant": "globex",
       "question": "What is the maintenance window in our service level agreement?",
-      "ms": 108.96890005096793,
+      "value": "09:00-17:00 CET",
+      "answer": "Here is what the documents say:\n- Globex Health service level agreement: maintenance window: Globex Health service level agreement - maintenance window. At Globex Health, the maintenance window is 09:00-17:00 CET. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-7BF401.\n- Globex Health service level agreement: uptime commitment: Globex Health service level agreement - uptime commitment. At Globex Health, the uptime commitment is 99.99%. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-27CAF6.\n- Globex Health vendor management: contract renewal notice: Globex Health vendor management - contract renewal notice. At Globex Health, the contract renewal notice is 10 days. This applies to every Globex Health customer account covered by the vendor management. Internal reference: GLBX-672E60.\n- Globex Health service level agreement: escalation contact: Globex Health service level agreement - escalation contact. At Globex Health, the escalation contact is the COO. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-21DB9D.\n- Globex Health service level agreement: response time for severity 1: Globex Health service level agreement - response time for severity 1. At Globex Health, the response time for severity 1 is 48 hours. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-56E00A. Integration key on file: AKIARE2VLBHD2BGHYLMF.",
+      "ms": 77.35300000058487,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -386,7 +511,10 @@
     {
       "tenant": "globex",
       "question": "What is the sandbox lifetime in our onboarding guide?",
-      "ms": 182.22679995233193,
+      "value": "21 days",
+      "answer": "Here is what the documents say:\n- Globex Health onboarding guide: sandbox lifetime: Globex Health onboarding guide - sandbox lifetime. At Globex Health, the sandbox lifetime is 21 days. This applies to every Globex Health customer account covered by the onboarding guide. Internal reference: GLBX-F55568.\n- Globex Health onboarding guide: onboarding duration: Globex Health onboarding guide - onboarding duration. At Globex Health, the onboarding duration is 10 days. This applies to every Globex Health customer account covered by the onboarding guide. Internal reference: GLBX-19CCC6.\n- Globex Health onboarding guide: go-live checklist owner: Globex Health onboarding guide - go-live checklist owner. At Globex Health, the go-live checklist owner is the Head of Support. This applies to every Globex Health customer account covered by the onboarding guide. Internal reference: GLBX-4F7097.\n- Globex Health escalation workflow: customer update cadence: Globex Health escalation workflow - customer update cadence. At Globex Health, the customer update cadence is 2 hours. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-017859.\n- Globex Health onboarding guide: training sessions included: Globex Health onboarding guide - training sessions included. At Globex Health, the training sessions included is 600. This applies to every Globex Health customer account covered by the onboarding guide. Internal reference: GLBX-EC22FE.",
+      "ms": 91.36679999937769,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -396,7 +524,10 @@
     {
       "tenant": "globex",
       "question": "What is the escalation timeout in our escalation workflow?",
-      "ms": 132.04140000743791,
+      "value": "1 hours",
+      "answer": "Here is what the documents say:\n- Globex Health escalation workflow: escalation timeout: Globex Health escalation workflow - escalation timeout. At Globex Health, the escalation timeout is 1 hours. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-B1A0F0.\n- Globex Health escalation workflow: postmortem deadline: Globex Health escalation workflow - postmortem deadline. At Globex Health, the postmortem deadline is 7 days. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-BBAA0D.\n- Globex Health escalation workflow: first escalation tier: Globex Health escalation workflow - first escalation tier. At Globex Health, the first escalation tier is the Customer Success Manager. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-360EDB.\n- Globex Health escalation workflow: customer update cadence: Globex Health escalation workflow - customer update cadence. At Globex Health, the customer update cadence is 2 hours. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-017859.\n- Globex Health service level agreement: escalation contact: Globex Health service level agreement - escalation contact. At Globex Health, the escalation contact is the COO. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-21DB9D.",
+      "ms": 86.35060000233352,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -406,7 +537,10 @@
     {
       "tenant": "globex",
       "question": "What is the partial refund limit in our refund policy?",
-      "ms": 100.08410003501922,
+      "value": "$1200",
+      "answer": "Here is what the documents say:\n- Globex Health refund policy: partial refund limit: Globex Health refund policy - partial refund limit. At Globex Health, the partial refund limit is $1200. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-AFFB27.\n- Globex Health refund policy: refund window: Globex Health refund policy - refund window. At Globex Health, the refund window is 7 days. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-4C1289.\n- Globex Health refund policy: restocking fee: Globex Health refund policy - restocking fee. At Globex Health, the restocking fee is 15%. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-7B269C.\n- Globex Health refund policy: refund processing time: Globex Health refund policy - refund processing time. At Globex Health, the refund processing time is 21 days. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-EC7F18.\n- Globex Health refund policy: refund approver: Globex Health refund policy - refund approver. At Globex Health, the refund approver is the Customer Success Manager. This applies to every Globex Health customer account covered by the refund policy. Internal reference: GLBX-EEA80F.",
+      "ms": 80.18940000329167,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -416,7 +550,10 @@
     {
       "tenant": "initech",
       "question": "What is the retention owner in our data retention?",
-      "ms": 132.60429998626933,
+      "value": "the Head of Support",
+      "answer": "Here is what the documents say:\n- Initech Software data retention: retention owner: Initech Software data retention - retention owner. At Initech Software, the retention owner is the Head of Support. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-56D38A.\n- Initech Software data retention: backup retention period: Initech Software data retention - backup retention period. At Initech Software, the backup retention period is 10 days. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-AEB233.\n- Initech Software data retention: archive storage region: Initech Software data retention - archive storage region. At Initech Software, the archive storage region is eu-west-1. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-F0EEC7.\n- Initech Software data retention: log retention period: Initech Software data retention - log retention period. At Initech Software, the log retention period is 45 days. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-5C00B1.\n- Initech Software onboarding guide: go-live checklist owner: Initech Software onboarding guide - go-live checklist owner. At Initech Software, the go-live checklist owner is the Account Executive. This applies to every Initech Software customer account covered by the onboarding guide. Internal reference: INIT-3FB529.",
+      "ms": 94.9043000000529,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -426,7 +563,10 @@
     {
       "tenant": "initech",
       "question": "What is the service credit in our service level agreement?",
-      "ms": 144.50509997550398,
+      "value": "10%",
+      "answer": "Here is what the documents say:\n- Initech Software service level agreement: service credit: Initech Software service level agreement - service credit. At Initech Software, the service credit is 10%. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-B351F7.\n- Initech Software service level agreement: uptime commitment: Initech Software service level agreement - uptime commitment. At Initech Software, the uptime commitment is 99.9%. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-E96F2F.\n- Initech Software service level agreement: escalation contact: Initech Software service level agreement - escalation contact. At Initech Software, the escalation contact is the Head of Support. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-B15FDF.\n- Initech Software service level agreement: maintenance window: Initech Software service level agreement - maintenance window. At Initech Software, the maintenance window is 08:00-18:00 local time. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-DF49CD.\n- Initech Software service level agreement: response time for severity 1: Initech Software service level agreement - response time for severity 1. At Initech Software, the response time for severity 1 is 12 hours. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-D48150. Integration key on file: AKIARF5UMTKPJ4SQDPOT.",
+      "ms": 76.19269999850076,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -436,7 +576,10 @@
     {
       "tenant": "initech",
       "question": "What is the weekend coverage in our support hours?",
-      "ms": 94.69220001483336,
+      "value": "07:00-19:00 UTC",
+      "answer": "Here is what the documents say:\n- Initech Software support hours: weekend coverage: Initech Software support hours - weekend coverage. At Initech Software, the weekend coverage is 07:00-19:00 UTC. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-DE1A4F.\n- Initech Software support hours: weekday support hours: Initech Software support hours - weekday support hours. At Initech Software, the weekday support hours is 08:00-18:00 local time. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-6FCF49.\n- Initech Software support hours: holiday policy: Initech Software support hours - holiday policy. At Initech Software, the holiday policy is monthly. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-2C1906.\n- Initech Software support hours: phone support tier: Initech Software support hours - phone support tier. At Initech Software, the phone support tier is the Account Executive. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-ED855D.\n- Initech Software support hours: chat response target: Initech Software support hours - chat response target. At Initech Software, the chat response target is 4 hours. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-A474D5.",
+      "ms": 77.16139999683946,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -446,7 +589,10 @@
     {
       "tenant": "initech",
       "question": "What is the go-live checklist owner in our onboarding guide?",
-      "ms": 102.69359999801964,
+      "value": "the Account Executive",
+      "answer": "Here is what the documents say:\n- Initech Software onboarding guide: go-live checklist owner: Initech Software onboarding guide - go-live checklist owner. At Initech Software, the go-live checklist owner is the Account Executive. This applies to every Initech Software customer account covered by the onboarding guide. Internal reference: INIT-3FB529.\n- Initech Software onboarding guide: kickoff owner: Initech Software onboarding guide - kickoff owner. At Initech Software, the kickoff owner is the Account Executive. This applies to every Initech Software customer account covered by the onboarding guide. Internal reference: INIT-9B8A08.\n- Initech Software onboarding guide: sandbox lifetime: Initech Software onboarding guide - sandbox lifetime. At Initech Software, the sandbox lifetime is 30 days. This applies to every Initech Software customer account covered by the onboarding guide. Internal reference: INIT-CE2E11.\n- Initech Software vendor management: vendor risk owner: Initech Software vendor management - vendor risk owner. At Initech Software, the vendor risk owner is the Head of Support. This applies to every Initech Software customer account covered by the vendor management. Internal reference: INIT-B6462B.\n- Initech Software data retention: retention owner: Initech Software data retention - retention owner. At Initech Software, the retention owner is the Head of Support. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-56D38A.",
+      "ms": 78.64330000302289,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -456,7 +602,10 @@
     {
       "tenant": "initech",
       "question": "What is the weekday support hours in our support hours?",
-      "ms": 105.5653000366874,
+      "value": "08:00-18:00 local time",
+      "answer": "Here is what the documents say:\n- Initech Software support hours: weekday support hours: Initech Software support hours - weekday support hours. At Initech Software, the weekday support hours is 08:00-18:00 local time. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-6FCF49.\n- Initech Software support hours: weekend coverage: Initech Software support hours - weekend coverage. At Initech Software, the weekend coverage is 07:00-19:00 UTC. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-DE1A4F.\n- Initech Software support hours: phone support tier: Initech Software support hours - phone support tier. At Initech Software, the phone support tier is the Account Executive. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-ED855D.\n- Initech Software support hours: holiday policy: Initech Software support hours - holiday policy. At Initech Software, the holiday policy is monthly. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-2C1906.\n- Initech Software support hours: chat response target: Initech Software support hours - chat response target. At Initech Software, the chat response target is 4 hours. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-A474D5.",
+      "ms": 87.523100002727,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -466,7 +615,10 @@
     {
       "tenant": "initech",
       "question": "What is the payload size limit in our API limits?",
-      "ms": 87.80929999193177,
+      "value": "10 MB",
+      "answer": "Here is what the documents say:\n- Initech Software API limits: payload size limit: Initech Software API limits - payload size limit. At Initech Software, the payload size limit is 10 MB. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-730D17.\n- Initech Software API limits: requests per minute limit: Initech Software API limits - requests per minute limit. At Initech Software, the requests per minute limit is 60. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-939D82.\n- Initech Software API limits: burst allowance: Initech Software API limits - burst allowance. At Initech Software, the burst allowance is 5. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-CEB350.\n- Initech Software API limits: webhook retry count: Initech Software API limits - webhook retry count. At Initech Software, the webhook retry count is 100. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-781A0C.\n- Initech Software API limits: API key rotation period: Initech Software API limits - API key rotation period. At Initech Software, the API key rotation period is 10 days. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-D39D49.",
+      "ms": 80.89600000676,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -476,7 +628,10 @@
     {
       "tenant": "initech",
       "question": "What is the enterprise discount in our pricing?",
-      "ms": 86.6319999913685,
+      "value": "12%",
+      "answer": "Here is what the documents say:\n- Initech Software pricing: enterprise discount: Initech Software pricing - enterprise discount. At Initech Software, the enterprise discount is 12%. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-DABE24.\n- Initech Software pricing: annual prepay discount: Initech Software pricing - annual prepay discount. At Initech Software, the annual prepay discount is 25%. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-903902.\n- Initech Software pricing: starter plan price: Initech Software pricing - starter plan price. At Initech Software, the starter plan price is $250. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-AAFFAC.\n- Initech Software pricing: overage rate: Initech Software pricing - overage rate. At Initech Software, the overage rate is $99. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-30C190.\n- Initech Software service level agreement: service credit: Initech Software service level agreement - service credit. At Initech Software, the service credit is 10%. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-B351F7.",
+      "ms": 86.6498000032152,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -486,7 +641,10 @@
     {
       "tenant": "initech",
       "question": "What is the response time for severity 1 in our service level agreement?",
-      "ms": 103.5115999984555,
+      "value": "12 hours",
+      "answer": "Here is what the documents say:\n- Initech Software service level agreement: response time for severity 1: Initech Software service level agreement - response time for severity 1. At Initech Software, the response time for severity 1 is 12 hours. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-D48150. Integration key on file: AKIARF5UMTKPJ4SQDPOT.\n- Initech Software service level agreement: maintenance window: Initech Software service level agreement - maintenance window. At Initech Software, the maintenance window is 08:00-18:00 local time. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-DF49CD.\n- Initech Software service level agreement: uptime commitment: Initech Software service level agreement - uptime commitment. At Initech Software, the uptime commitment is 99.9%. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-E96F2F.\n- Initech Software service level agreement: escalation contact: Initech Software service level agreement - escalation contact. At Initech Software, the escalation contact is the Head of Support. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-B15FDF.\n- Initech Software escalation workflow: postmortem deadline: Initech Software escalation workflow - postmortem deadline. At Initech Software, the postmortem deadline is 7 days. This applies to every Initech Software customer account covered by the escalation workflow. Internal reference: INIT-3199ED.",
+      "ms": 85.62430000165477,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -496,7 +654,10 @@
     {
       "tenant": "initech",
       "question": "What is the holiday policy in our support hours?",
-      "ms": 118.69350000051782,
+      "value": "monthly",
+      "answer": "Here is what the documents say:\n- Initech Software support hours: holiday policy: Initech Software support hours - holiday policy. At Initech Software, the holiday policy is monthly. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-2C1906.\n- Initech Software support hours: weekend coverage: Initech Software support hours - weekend coverage. At Initech Software, the weekend coverage is 07:00-19:00 UTC. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-DE1A4F.\n- Initech Software support hours: weekday support hours: Initech Software support hours - weekday support hours. At Initech Software, the weekday support hours is 08:00-18:00 local time. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-6FCF49.\n- Initech Software support hours: chat response target: Initech Software support hours - chat response target. At Initech Software, the chat response target is 4 hours. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-A474D5.\n- Initech Software support hours: phone support tier: Initech Software support hours - phone support tier. At Initech Software, the phone support tier is the Account Executive. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-ED855D.",
+      "ms": 78.62229999591364,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -506,7 +667,10 @@
     {
       "tenant": "initech",
       "question": "What is the contract renewal notice in our vendor management?",
-      "ms": 97.83630003221333,
+      "value": "45 days",
+      "answer": "Here is what the documents say:\n- Initech Software vendor management: contract renewal notice: Initech Software vendor management - contract renewal notice. At Initech Software, the contract renewal notice is 45 days. This applies to every Initech Software customer account covered by the vendor management. Internal reference: INIT-8E244C.\n- Initech Software vendor management: approved vendor count: Initech Software vendor management - approved vendor count. At Initech Software, the approved vendor count is 5. This applies to every Initech Software customer account covered by the vendor management. Internal reference: INIT-500CB9.\n- Initech Software vendor management: vendor review cadence: Initech Software vendor management - vendor review cadence. At Initech Software, the vendor review cadence is annually. This applies to every Initech Software customer account covered by the vendor management. Internal reference: INIT-C422E6.\n- Initech Software vendor management: vendor risk owner: Initech Software vendor management - vendor risk owner. At Initech Software, the vendor risk owner is the Head of Support. This applies to every Initech Software customer account covered by the vendor management. Internal reference: INIT-B6462B.\n- Initech Software service level agreement: uptime commitment: Initech Software service level agreement - uptime commitment. At Initech Software, the uptime commitment is 99.9%. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-E96F2F.",
+      "ms": 78.64739999786252,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -516,7 +680,10 @@
     {
       "tenant": "initech",
       "question": "What is the overage rate in our pricing?",
-      "ms": 97.76850003981963,
+      "value": "$99",
+      "answer": "Here is what the documents say:\n- Initech Software pricing: overage rate: Initech Software pricing - overage rate. At Initech Software, the overage rate is $99. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-30C190.\n- Initech Software refund policy: restocking fee: Initech Software refund policy - restocking fee. At Initech Software, the restocking fee is 20%. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-07BA10.\n- Initech Software pricing: annual prepay discount: Initech Software pricing - annual prepay discount. At Initech Software, the annual prepay discount is 25%. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-903902.\n- Initech Software API limits: requests per minute limit: Initech Software API limits - requests per minute limit. At Initech Software, the requests per minute limit is 60. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-939D82.\n- Initech Software pricing: enterprise discount: Initech Software pricing - enterprise discount. At Initech Software, the enterprise discount is 12%. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-DABE24.",
+      "ms": 93.19110000069486,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -526,7 +693,10 @@
     {
       "tenant": "initech",
       "question": "What is the incident notification deadline in our security policy?",
-      "ms": 87.00080000562593,
+      "value": "2 hours",
+      "answer": "Here is what the documents say:\n- Initech Software security policy: incident notification deadline: Initech Software security policy - incident notification deadline. At Initech Software, the incident notification deadline is 2 hours. This applies to every Initech Software customer account covered by the security policy. Internal reference: INIT-92E3BE.\n- Initech Software escalation workflow: postmortem deadline: Initech Software escalation workflow - postmortem deadline. At Initech Software, the postmortem deadline is 7 days. This applies to every Initech Software customer account covered by the escalation workflow. Internal reference: INIT-3199ED.\n- Initech Software escalation workflow: escalation timeout: Initech Software escalation workflow - escalation timeout. At Initech Software, the escalation timeout is 4 hours. This applies to every Initech Software customer account covered by the escalation workflow. Internal reference: INIT-8E789F.\n- Initech Software security policy: security contact: Initech Software security policy - security contact. At Initech Software, the security contact is the Customer Success Manager. This applies to every Initech Software customer account covered by the security policy. Internal reference: INIT-265C6A.\n- Initech Software data retention: deletion request deadline: Initech Software data retention - deletion request deadline. At Initech Software, the deletion request deadline is 90 days. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-D24A4C. Integration key on file: AKIAZH7AAW2V2JTFCCKK.",
+      "ms": 100.572800001828,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -536,7 +706,10 @@
     {
       "tenant": "initech",
       "question": "What is the webhook retry count in our API limits?",
-      "ms": 93.43119995901361,
+      "value": "100",
+      "answer": "Here is what the documents say:\n- Initech Software API limits: webhook retry count: Initech Software API limits - webhook retry count. At Initech Software, the webhook retry count is 100. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-781A0C.\n- Initech Software API limits: requests per minute limit: Initech Software API limits - requests per minute limit. At Initech Software, the requests per minute limit is 60. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-939D82.\n- Initech Software API limits: payload size limit: Initech Software API limits - payload size limit. At Initech Software, the payload size limit is 10 MB. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-730D17.\n- Initech Software API limits: burst allowance: Initech Software API limits - burst allowance. At Initech Software, the burst allowance is 5. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-CEB350.\n- Initech Software API limits: API key rotation period: Initech Software API limits - API key rotation period. At Initech Software, the API key rotation period is 10 days. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-D39D49.",
+      "ms": 82.45439999882365,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -546,7 +719,10 @@
     {
       "tenant": "initech",
       "question": "What is the vendor review cadence in our vendor management?",
-      "ms": 96.56139998696744,
+      "value": "annually",
+      "answer": "Here is what the documents say:\n- Initech Software vendor management: vendor review cadence: Initech Software vendor management - vendor review cadence. At Initech Software, the vendor review cadence is annually. This applies to every Initech Software customer account covered by the vendor management. Internal reference: INIT-C422E6.\n- Initech Software vendor management: approved vendor count: Initech Software vendor management - approved vendor count. At Initech Software, the approved vendor count is 5. This applies to every Initech Software customer account covered by the vendor management. Internal reference: INIT-500CB9.\n- Initech Software vendor management: vendor risk owner: Initech Software vendor management - vendor risk owner. At Initech Software, the vendor risk owner is the Head of Support. This applies to every Initech Software customer account covered by the vendor management. Internal reference: INIT-B6462B.\n- Initech Software escalation workflow: customer update cadence: Initech Software escalation workflow - customer update cadence. At Initech Software, the customer update cadence is 2 hours. This applies to every Initech Software customer account covered by the escalation workflow. Internal reference: INIT-E7C7C1.\n- Initech Software vendor management: contract renewal notice: Initech Software vendor management - contract renewal notice. At Initech Software, the contract renewal notice is 45 days. This applies to every Initech Software customer account covered by the vendor management. Internal reference: INIT-8E244C.",
+      "ms": 81.33449999877485,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -556,7 +732,10 @@
     {
       "tenant": "initech",
       "question": "What is the partial refund limit in our refund policy?",
-      "ms": 106.2552000512369,
+      "value": "$5000",
+      "answer": "Here is what the documents say:\n- Initech Software refund policy: partial refund limit: Initech Software refund policy - partial refund limit. At Initech Software, the partial refund limit is $5000. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-EB29C2.\n- Initech Software refund policy: refund window: Initech Software refund policy - refund window. At Initech Software, the refund window is 14 days. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-76ED3D.\n- Initech Software refund policy: restocking fee: Initech Software refund policy - restocking fee. At Initech Software, the restocking fee is 20%. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-07BA10.\n- Initech Software refund policy: refund processing time: Initech Software refund policy - refund processing time. At Initech Software, the refund processing time is 60 days. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-E0030F.\n- Initech Software refund policy: refund approver: Initech Software refund policy - refund approver. At Initech Software, the refund approver is the Account Executive. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-D0444E.",
+      "ms": 82.71360000071581,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -566,7 +745,10 @@
     {
       "tenant": "initech",
       "question": "What is the refund processing time in our refund policy?",
-      "ms": 98.87119999621063,
+      "value": "60 days",
+      "answer": "Here is what the documents say:\n- Initech Software refund policy: refund processing time: Initech Software refund policy - refund processing time. At Initech Software, the refund processing time is 60 days. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-E0030F.\n- Initech Software refund policy: refund window: Initech Software refund policy - refund window. At Initech Software, the refund window is 14 days. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-76ED3D.\n- Initech Software refund policy: restocking fee: Initech Software refund policy - restocking fee. At Initech Software, the restocking fee is 20%. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-07BA10.\n- Initech Software refund policy: partial refund limit: Initech Software refund policy - partial refund limit. At Initech Software, the partial refund limit is $5000. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-EB29C2.\n- Initech Software refund policy: refund approver: Initech Software refund policy - refund approver. At Initech Software, the refund approver is the Account Executive. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-D0444E.",
+      "ms": 107.05840000446187,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -576,7 +758,10 @@
     {
       "tenant": "initech",
       "question": "What is the annual prepay discount in our pricing?",
-      "ms": 93.11479999450967,
+      "value": "25%",
+      "answer": "Here is what the documents say:\n- Initech Software pricing: annual prepay discount: Initech Software pricing - annual prepay discount. At Initech Software, the annual prepay discount is 25%. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-903902.\n- Initech Software pricing: enterprise discount: Initech Software pricing - enterprise discount. At Initech Software, the enterprise discount is 12%. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-DABE24.\n- Initech Software pricing: starter plan price: Initech Software pricing - starter plan price. At Initech Software, the starter plan price is $250. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-AAFFAC.\n- Initech Software pricing: overage rate: Initech Software pricing - overage rate. At Initech Software, the overage rate is $99. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-30C190.\n- Initech Software refund policy: restocking fee: Initech Software refund policy - restocking fee. At Initech Software, the restocking fee is 20%. This applies to every Initech Software customer account covered by the refund policy. Internal reference: INIT-07BA10.",
+      "ms": 80.11310000438243,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -586,7 +771,10 @@
     {
       "tenant": "initech",
       "question": "What is the backup retention period in our data retention?",
-      "ms": 85.83949995227158,
+      "value": "10 days",
+      "answer": "Here is what the documents say:\n- Initech Software data retention: backup retention period: Initech Software data retention - backup retention period. At Initech Software, the backup retention period is 10 days. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-AEB233.\n- Initech Software data retention: log retention period: Initech Software data retention - log retention period. At Initech Software, the log retention period is 45 days. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-5C00B1.\n- Initech Software data retention: deletion request deadline: Initech Software data retention - deletion request deadline. At Initech Software, the deletion request deadline is 90 days. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-D24A4C. Integration key on file: AKIAZH7AAW2V2JTFCCKK.\n- Initech Software data retention: archive storage region: Initech Software data retention - archive storage region. At Initech Software, the archive storage region is eu-west-1. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-F0EEC7.\n- Initech Software data retention: retention owner: Initech Software data retention - retention owner. At Initech Software, the retention owner is the Head of Support. This applies to every Initech Software customer account covered by the data retention. Internal reference: INIT-56D38A.",
+      "ms": 84.98519999557175,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -596,7 +784,10 @@
     {
       "tenant": "initech",
       "question": "What is the executive sponsor in our escalation workflow?",
-      "ms": 91.33520000614226,
+      "value": "the VP Operations",
+      "answer": "Here is what the documents say:\n- Initech Software escalation workflow: executive sponsor: Initech Software escalation workflow - executive sponsor. At Initech Software, the executive sponsor is the VP Operations. This applies to every Initech Software customer account covered by the escalation workflow. Internal reference: INIT-AE9C39.\n- Initech Software escalation workflow: first escalation tier: Initech Software escalation workflow - first escalation tier. At Initech Software, the first escalation tier is the Head of Support. This applies to every Initech Software customer account covered by the escalation workflow. Internal reference: INIT-AB44B3.\n- Initech Software service level agreement: escalation contact: Initech Software service level agreement - escalation contact. At Initech Software, the escalation contact is the Head of Support. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-B15FDF.\n- Initech Software escalation workflow: escalation timeout: Initech Software escalation workflow - escalation timeout. At Initech Software, the escalation timeout is 4 hours. This applies to every Initech Software customer account covered by the escalation workflow. Internal reference: INIT-8E789F.\n- Initech Software escalation workflow: customer update cadence: Initech Software escalation workflow - customer update cadence. At Initech Software, the customer update cadence is 2 hours. This applies to every Initech Software customer account covered by the escalation workflow. Internal reference: INIT-E7C7C1.",
+      "ms": 81.56270000472432,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
@@ -606,12 +797,422 @@
     {
       "tenant": "initech",
       "question": "What is the security contact in our security policy?",
-      "ms": 89.14529997855425,
+      "value": "the Customer Success Manager",
+      "answer": "Here is what the documents say:\n- Initech Software security policy: security contact: Initech Software security policy - security contact. At Initech Software, the security contact is the Customer Success Manager. This applies to every Initech Software customer account covered by the security policy. Internal reference: INIT-265C6A.\n- Initech Software security policy: MFA requirement: Initech Software security policy - MFA requirement. At Initech Software, the MFA requirement is required for all staff. This applies to every Initech Software customer account covered by the security policy. Internal reference: INIT-EDC020.\n- Initech Software service level agreement: escalation contact: Initech Software service level agreement - escalation contact. At Initech Software, the escalation contact is the Head of Support. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-B15FDF.\n- Initech Software security policy: penetration test cadence: Initech Software security policy - penetration test cadence. At Initech Software, the penetration test cadence is monthly. This applies to every Initech Software customer account covered by the security policy. Internal reference: INIT-F876AB.\n- Initech Software security policy: incident notification deadline: Initech Software security policy - incident notification deadline. At Initech Software, the incident notification deadline is 2 hours. This applies to every Initech Software customer account covered by the security policy. Internal reference: INIT-92E3BE.",
+      "ms": 78.52479999564821,
+      "error": null,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 0,
       "output_tokens": 0
+    }
+  ],
+  "agent_rows": [
+    {
+      "tenant": "acme",
+      "kind": "ticket",
+      "question": "Show me ticket T-1009",
+      "expect": "Dashboard loads slowly",
+      "answer": "Here is what I found:\nTicket T-1009 [acme] Dashboard loads slowly\nDashboard loads slowly. Customer customer9@acme-client.example.com reports the issue started this week.\nTicket reference: ACME-5C1FE2.",
+      "ms": 187.95649999810848,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "ticket",
+      "question": "Show me ticket T-1010",
+      "expect": "Question about refund",
+      "answer": "Here is what I found:\nTicket T-1010 [acme] Question about refund\nQuestion about refund. Customer customer10@acme-client.example.com reports the issue started this week.\nTicket reference: ACME-481CC7.",
+      "ms": 94.56679999857442,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "ticket",
+      "question": "Show me ticket T-1012",
+      "expect": "Sandbox expired early",
+      "answer": "Here is what I found:\nTicket T-1012 [acme] Sandbox expired early\nSandbox expired early. Customer customer12@acme-client.example.com reports the issue started this week.\nTicket reference: ACME-C214C2.",
+      "ms": 96.63410000212025,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "search",
+      "question": "Search our knowledge base for the overage rate",
+      "expect": "$99",
+      "answer": "Here is what I found:\nAcme Logistics pricing: overage rate: Acme Logistics pricing - overage rate. At Acme Logistics, the overage rate is $99. This applies to every Acme Logistics customer account covered by the pricing. Internal reference: ACME-0987FA.\n\nAcme Logistics data retention: deletion request deadline: Acme Logistics data retention - deletion request deadline. At Acme Logistics, the deletion request deadline is 21 days. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-F7EF4F. Integration key on file: AKIAPPIWWL47ECDOKTCZ.\n\nAcme Logistics API limits: webhook retry count: Acme Logistics API limits - webhook retry count. At Acme Logistics, the webhook retry count is 10. This applies to every Acme Logistics customer account covered by the API limits. Internal reference: ACME-89070C.",
+      "ms": 1276.398900001368,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "search",
+      "question": "Search our knowledge base for the enterprise discount",
+      "expect": "12%",
+      "answer": "Here is what I found:\nAcme Logistics pricing: enterprise discount: Acme Logistics pricing - enterprise discount. At Acme Logistics, the enterprise discount is 12%. This applies to every Acme Logistics customer account covered by the pricing. Internal reference: ACME-B0BF1B.\n\nAcme Logistics pricing: annual prepay discount: Acme Logistics pricing - annual prepay discount. At Acme Logistics, the annual prepay discount is 10%. This applies to every Acme Logistics customer account covered by the pricing. Internal reference: ACME-E602D2.\n\nAcme Logistics onboarding guide: go-live checklist owner: Acme Logistics onboarding guide - go-live checklist owner. At Acme Logistics, the go-live checklist owner is the Finance Director. This applies to every Acme Logistics customer account covered by the onboarding guide. Internal reference: ACME-371931.",
+      "ms": 393.7328999963938,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "search",
+      "question": "Search our knowledge base for the deletion request deadline",
+      "expect": "21 days",
+      "answer": "Here is what I found:\nAcme Logistics data retention: deletion request deadline: Acme Logistics data retention - deletion request deadline. At Acme Logistics, the deletion request deadline is 21 days. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-F7EF4F. Integration key on file: AKIAPPIWWL47ECDOKTCZ.\n\nAcme Logistics escalation workflow: postmortem deadline: Acme Logistics escalation workflow - postmortem deadline. At Acme Logistics, the postmortem deadline is 90 days. This applies to every Acme Logistics customer account covered by the escalation workflow. Internal reference: ACME-31DE04.\n\nAcme Logistics data retention: archive storage region: Acme Logistics data retention - archive storage region. At Acme Logistics, the archive storage region is eu-west-1. This applies to every Acme Logistics customer account covered by the data retention. Internal reference: ACME-D0453B.",
+      "ms": 380.5398000040441,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "note",
+      "question": "Add a note to ticket T-1005: customer confirmed the fix",
+      "expect": "T-1005",
+      "answer": "Here is what I found:\nNote added to T-1005.",
+      "ms": 211.43199999642093,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "note",
+      "question": "Add a note to ticket T-1006: customer confirmed the fix",
+      "expect": "T-1006",
+      "answer": "Here is what I found:\nNote added to T-1006.",
+      "ms": 94.23139999853447,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "note",
+      "question": "Add a note to ticket T-1007: customer confirmed the fix",
+      "expect": "T-1007",
+      "answer": "Here is what I found:\nNote added to T-1007.",
+      "ms": 91.05690000433242,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "ticket",
+      "question": "Show me ticket T-2009",
+      "expect": "Dashboard loads slowly",
+      "answer": "Here is what I found:\nTicket T-2009 [globex] Dashboard loads slowly\nDashboard loads slowly. Customer customer9@globex-client.example.com reports the issue started this week.\nTicket reference: GLBX-E1925E.",
+      "ms": 132.78889999492094,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "ticket",
+      "question": "Show me ticket T-2003",
+      "expect": "SSO login loop",
+      "answer": "Here is what I found:\nTicket T-2003 [globex] SSO login loop\nSSO login loop. Customer customer3@globex-client.example.com reports the issue started this week.\nTicket reference: GLBX-410AFC.",
+      "ms": 117.50799999572337,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "ticket",
+      "question": "Show me ticket T-2002",
+      "expect": "Invoice total looks wrong",
+      "answer": "Here is what I found:\nTicket T-2002 [globex] Invoice total looks wrong\nInvoice total looks wrong. Customer customer2@globex-client.example.com reports the issue started this week.\nTicket reference: GLBX-046EF5.",
+      "ms": 105.19809999823337,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "search",
+      "question": "Search our knowledge base for the uptime commitment",
+      "expect": "99.99%",
+      "answer": "Here is what I found:\nGlobex Health service level agreement: uptime commitment: Globex Health service level agreement - uptime commitment. At Globex Health, the uptime commitment is 99.99%. This applies to every Globex Health customer account covered by the service level agreement. Internal reference: GLBX-27CAF6.\n\nGlobex Health escalation workflow: customer update cadence: Globex Health escalation workflow - customer update cadence. At Globex Health, the customer update cadence is 2 hours. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-017859.\n\nGlobex Health onboarding guide: kickoff owner: Globex Health onboarding guide - kickoff owner. At Globex Health, the kickoff owner is the COO. This applies to every Globex Health customer account covered by the onboarding guide. Internal reference: GLBX-76B910.",
+      "ms": 315.0370000003022,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "search",
+      "question": "Search our knowledge base for the retention owner",
+      "expect": "the Account Executive",
+      "answer": "Here is what I found:\nGlobex Health data retention: retention owner: Globex Health data retention - retention owner. At Globex Health, the retention owner is the Account Executive. This applies to every Globex Health customer account covered by the data retention. Internal reference: GLBX-9CB4CE.\n\nGlobex Health onboarding guide: go-live checklist owner: Globex Health onboarding guide - go-live checklist owner. At Globex Health, the go-live checklist owner is the Head of Support. This applies to every Globex Health customer account covered by the onboarding guide. Internal reference: GLBX-4F7097.\n\nGlobex Health data retention: deletion request deadline: Globex Health data retention - deletion request deadline. At Globex Health, the deletion request deadline is 30 days. This applies to every Globex Health customer account covered by the data retention. Internal reference: GLBX-190632. Integration key on file: AKIALEL5SVR4SFQ4T7TJ.",
+      "ms": 531.7080000022543,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "search",
+      "question": "Search our knowledge base for the API key rotation period",
+      "expect": "21 days",
+      "answer": "Here is what I found:\nGlobex Health API limits: API key rotation period: Globex Health API limits - API key rotation period. At Globex Health, the API key rotation period is 21 days. This applies to every Globex Health customer account covered by the API limits. Internal reference: GLBX-31528B.\n\nGlobex Health security policy: password rotation period: Globex Health security policy - password rotation period. At Globex Health, the password rotation period is 10 days. This applies to every Globex Health customer account covered by the security policy. Internal reference: GLBX-625B6D.\n\nGlobex Health escalation workflow: customer update cadence: Globex Health escalation workflow - customer update cadence. At Globex Health, the customer update cadence is 2 hours. This applies to every Globex Health customer account covered by the escalation workflow. Internal reference: GLBX-017859.",
+      "ms": 202.77299999725074,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "note",
+      "question": "Add a note to ticket T-2005: customer confirmed the fix",
+      "expect": "T-2005",
+      "answer": "Here is what I found:\nNote added to T-2005.",
+      "ms": 166.7237000001478,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "note",
+      "question": "Add a note to ticket T-2010: customer confirmed the fix",
+      "expect": "T-2010",
+      "answer": "Here is what I found:\nNote added to T-2010.",
+      "ms": 305.86890000267886,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "note",
+      "question": "Add a note to ticket T-2012: customer confirmed the fix",
+      "expect": "T-2012",
+      "answer": "Here is what I found:\nNote added to T-2012.",
+      "ms": 106.43530000379542,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "ticket",
+      "question": "Show me ticket T-3001",
+      "expect": "Cannot export monthly report",
+      "answer": "Here is what I found:\nTicket T-3001 [initech] Cannot export monthly report\nCannot export monthly report. Customer customer1@initech-client.example.com reports the issue started this week.\nTicket reference: INIT-FB498F.",
+      "ms": 158.1099999966682,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "ticket",
+      "question": "Show me ticket T-3008",
+      "expect": "Password reset email missing",
+      "answer": "Here is what I found:\nTicket T-3008 [initech] Password reset email missing\nPassword reset email missing. Customer customer8@initech-client.example.com reports the issue started this week.\nTicket reference: INIT-1D1230.",
+      "ms": 120.99049999960698,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "ticket",
+      "question": "Show me ticket T-3009",
+      "expect": "Dashboard loads slowly",
+      "answer": "Here is what I found:\nTicket T-3009 [initech] Dashboard loads slowly\nDashboard loads slowly. Customer customer9@initech-client.example.com reports the issue started this week.\nTicket reference: INIT-1938B4.",
+      "ms": 96.68790000432637,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "search",
+      "question": "Search our knowledge base for the burst allowance",
+      "expect": "5",
+      "answer": "Here is what I found:\nInitech Software API limits: burst allowance: Initech Software API limits - burst allowance. At Initech Software, the burst allowance is 5. This applies to every Initech Software customer account covered by the API limits. Internal reference: INIT-CEB350.\n\nInitech Software security policy: incident notification deadline: Initech Software security policy - incident notification deadline. At Initech Software, the incident notification deadline is 2 hours. This applies to every Initech Software customer account covered by the security policy. Internal reference: INIT-92E3BE.\n\nInitech Software onboarding guide: kickoff owner: Initech Software onboarding guide - kickoff owner. At Initech Software, the kickoff owner is the Account Executive. This applies to every Initech Software customer account covered by the onboarding guide. Internal reference: INIT-9B8A08.",
+      "ms": 250.91100000281585,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "search",
+      "question": "Search our knowledge base for the starter plan price",
+      "expect": "$250",
+      "answer": "Here is what I found:\nInitech Software pricing: starter plan price: Initech Software pricing - starter plan price. At Initech Software, the starter plan price is $250. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-AAFFAC.\n\nInitech Software pricing: annual prepay discount: Initech Software pricing - annual prepay discount. At Initech Software, the annual prepay discount is 25%. This applies to every Initech Software customer account covered by the pricing. Internal reference: INIT-903902.\n\nInitech Software onboarding guide: kickoff owner: Initech Software onboarding guide - kickoff owner. At Initech Software, the kickoff owner is the Account Executive. This applies to every Initech Software customer account covered by the onboarding guide. Internal reference: INIT-9B8A08.",
+      "ms": 387.91139999375446,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "search",
+      "question": "Search our knowledge base for the chat response target",
+      "expect": "4 hours",
+      "answer": "Here is what I found:\nInitech Software support hours: chat response target: Initech Software support hours - chat response target. At Initech Software, the chat response target is 4 hours. This applies to every Initech Software customer account covered by the support hours. Internal reference: INIT-A474D5.\n\nInitech Software service level agreement: response time for severity 1: Initech Software service level agreement - response time for severity 1. At Initech Software, the response time for severity 1 is 12 hours. This applies to every Initech Software customer account covered by the service level agreement. Internal reference: INIT-D48150. Integration key on file: AKIARF5UMTKPJ4SQDPOT.\n\nInitech Software onboarding guide: go-live checklist owner: Initech Software onboarding guide - go-live checklist owner. At Initech Software, the go-live checklist owner is the Account Executive. This applies to every Initech Software customer account covered by the onboarding guide. Internal reference: INIT-3FB529.",
+      "ms": 423.5887000031653,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "note",
+      "question": "Add a note to ticket T-3007: customer confirmed the fix",
+      "expect": "T-3007",
+      "answer": "Here is what I found:\nNote added to T-3007.",
+      "ms": 253.12530000519473,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "note",
+      "question": "Add a note to ticket T-3010: customer confirmed the fix",
+      "expect": "T-3010",
+      "answer": "Here is what I found:\nNote added to T-3010.",
+      "ms": 92.37990000110585,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "note",
+      "question": "Add a note to ticket T-3006: customer confirmed the fix",
+      "expect": "T-3006",
+      "answer": "Here is what I found:\nNote added to T-3006.",
+      "ms": 97.64780000114115,
+      "error": null,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
     }
   ]
 }
