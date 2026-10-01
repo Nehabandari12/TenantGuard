@@ -100,6 +100,7 @@ secret-shaped ones (AKIA key IDs, SSNs in the never-issued 9xx range).
 
 Every channel in the request trace is matched after decoding (standard and URL-safe base64, hex,
 URL-encoding, ROT13, reversal) and after removing separators, so `G L B X - 4 A 1 F 0 C` still matches.
+The replies of a session are also read joined in order, so a canary split across two replies is found.
 The detector and egress share `tenantguard/decode.py`.
 
 Each mode gets two scores. **Answers-only** looks at the final response, **all-channels** at everything.
