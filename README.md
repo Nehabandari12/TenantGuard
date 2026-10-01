@@ -112,7 +112,7 @@ Read these numbers with the [limitations](#limitations) in mind; each check ran 
 - **Cache** ([tenantguard/cache.py](tenantguard/cache.py)): RedisVL `SemanticCache` that always stores and always filters a `tenant_id` tag.
 - **Memory** ([tenantguard/memory.py](tenantguard/memory.py)): namespace is always `tenant:user`, and a call without a verified tenant raises.
 - **MCP** ([tenantguard/mcp_auth.py](tenantguard/mcp_auth.py)): no token passthrough. Each request gets a freshly minted, 60 s token whose audience is the MCP server, and tools have no tenant argument. The mcp 2.x SDK binds each session to the token's subject (`tenant:user`).
-- **Egress** ([tenantguard/egress.py](tenantguard/egress.py)): blocks foreign canaries after decoding, redacts secrets and PII (Presidio), and allows links only to approved domains, on answers, tool arguments and log lines.
+- **Egress** ([tenantguard/egress.py](tenantguard/egress.py)): blocks other tenants' canaries after decoding in answers and tool arguments, removes links to unapproved domains from answers and refuses tool calls that carry one, redacts secrets in answers and logs, and redacts PII (Presidio) in log lines. Answers keep the tenant's own customer details on purpose: they belong to that tenant.
 
 Why each piece is built this way, how leaks are scored, and the bugs found along the way:
 [docs/DESIGN.md](docs/DESIGN.md).

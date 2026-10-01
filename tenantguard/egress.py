@@ -4,8 +4,11 @@
    matched on every decoded view (base64, hex, URL-encoding, reversal, separators) -> block.
    This is the part that "knows the canaries"; TG_EGRESS_CANARY=0 turns it off so the
    benchmark can report B3 without it (otherwise egress and the detector share knowledge).
-2. Secrets: credential shapes (sk-..., AKIA...) and SSN / card numbers -> redact in every output.
-3. PII: Presidio (or a regex fallback) -> redact in log records and in anything sent to a URL.
+2. Secrets: credential shapes (sk-..., AKIA...) and SSN / card numbers -> redacted in answers and
+   log records.
+3. PII: Presidio (or a regex fallback) -> redacted in log records. Answers and tool arguments keep the
+   tenant's own customer details on purpose: they are that tenant's data, and a support agent needs a
+   customer's email. Other tenants' data never gets that far, because of check 1 and the access layer.
 4. Links: markdown links, images and bare URLs are only allowed to approved domains. A tool
    call whose arguments carry a non-approved URL is refused outright.
 """
