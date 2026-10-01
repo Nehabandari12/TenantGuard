@@ -136,7 +136,7 @@ Settings are in [.env.example](.env.example).
 | `LLM_PROVIDER` | Model | Cost | Notes |
 |---|---|---|---|
 | `ollama` (default) | `LLM_MODEL=qwen3:4b` | free, local | about 1 min per request on CPU |
-| `mock` | built-in | free, offline | deterministic, worst-case obedient; the full suite runs in about 1 minute |
+| `mock` | built-in | free, offline | deterministic, worst-case obedient; a few minutes per mode |
 | `anthropic` | `claude-haiku-4-5` | paid | **disabled**: refuses to start unless `TG_ALLOW_PAID_LLM=1` |
 
 Each LLM writes to its own folder (`results/mock/`, `results/qwen3-4b/`). Local and mock runs use 1 repeat
