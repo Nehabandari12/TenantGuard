@@ -123,6 +123,10 @@ Each step picks up where its saved results end: after a crash or reboot, or afte
 `attacks/cases.yaml`, you just run it again and only the missing checks run. Progress is in `results/<model>/progress.log`. Individual steps:
 `python -m attacks.run --mode B1`, `python -m eval.run_eval --mode B3 --per-tenant 5`, `python -m attacks.table`.
 
+**Demo.** `python -m attacks.demo` runs four of the checks (a tool asked for another tenant's ticket, a shared
+cache, planted instructions, the log viewer) in B0 and then B3, and prints what each user got back and the
+detector's verdict. About 30 seconds on the mock; add `--real` for the configured LLM. It writes no results.
+
 **B2 with Llama Prompt Guard 2.** Request access to
 [meta-llama/Llama-Prompt-Guard-2-86M](https://huggingface.co/meta-llama/Llama-Prompt-Guard-2-86M) and log in
 with `hf auth login`, then `uv pip install --python .venv -e ".[firewall]"`. `python -m attacks.bench --promptguard`
