@@ -94,8 +94,12 @@ def main() -> None:
             saved = json.loads(source.read_text(encoding="utf-8"))
             saved = saved if isinstance(saved, dict) else {"rows": saved}
             # Asked again: rows saved before answers were kept, and rows that hit a server error.
-            rows = [r for r in saved["rows"] if "answer" in r and not r.get("error")]
-            agent_rows = [r for r in saved.get("agent_rows", []) if not r.get("error")]
+            # Rows for questions no longer in the sample (a different --per-tenant) are dropped, not mixed in.
+            wanted = {q + "|" + t for t, q, _ in ask_tasks} | {t["question"] + "|" + t["tenant"] for t in agent_tasks}
+            rows = [r for r in saved["rows"] if "answer" in r and not r.get("error")
+                    and r["question"] + "|" + r["tenant"] in wanted]
+            agent_rows = [r for r in saved.get("agent_rows", []) if not r.get("error")
+                          and r["question"] + "|" + r["tenant"] in wanted]
     done = {r["question"] + "|" + r["tenant"] for r in rows + agent_rows}
     ask_todo = [t for t in ask_tasks if t[1] + "|" + t[0] not in done]
     agent_todo = [t for t in agent_tasks if t["question"] + "|" + t["tenant"] not in done]
