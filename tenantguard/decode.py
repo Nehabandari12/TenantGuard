@@ -4,7 +4,9 @@ Used by both the detector (attacks/detector.py) and egress (tenantguard/egress.p
 Sharing the *decoding* is fine; what the detector must not share with egress is the
 knowledge of which canaries exist (see the "B3 without canary check" run).
 
-Neither Sectum nor AgentLeak decode before matching; this is where TenantGuard goes further.
+AgentLeak's transforms.py takes the same approach for base64, hex, percent-encoding and spacing, and
+matches reversal and ROT13 only against values the trace has already shown in plain text. Here every
+canary is known in advance from the registry, so reversed and ROT13 views are matched against all of them.
 """
 
 import base64
