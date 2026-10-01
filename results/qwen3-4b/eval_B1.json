@@ -6,162 +6,367 @@
     "recall_at_5": 1.0,
     "answer_hit": 1.0,
     "wrong_block": 0.0,
-    "p50_ms": 42267.728199993144,
-    "p95_ms": 50906.17129999737,
+    "p50_ms": 30912.85909999715,
+    "p95_ms": 37864.98019999999,
     "input_tokens": 5661,
-    "output_tokens": 4126,
-    "usd": 0.0
+    "output_tokens": 4087,
+    "usd": 0.0,
+    "agent": {
+      "tasks": 9,
+      "done": 0.8888888888888888,
+      "by_kind": {
+        "ticket": 0.6666666666666666,
+        "search": 1.0,
+        "note": 1.0
+      },
+      "wrong_block": 0.0,
+      "tool_error": 0.1111111111111111,
+      "p50_ms": 73490.1841000028
+    },
+    "judge_model": "qwen3:4b",
+    "judged": 15,
+    "judge_correct": 1.0,
+    "judge_agrees": 1.0
   },
   "rows": [
     {
       "tenant": "acme",
       "question": "What is the password rotation period in our security policy?",
-      "ms": 49827.59120000992,
+      "value": "14 days",
+      "answer": "The password rotation period in our security policy is 14 days.\n\nDocument used: Acme Logistics security policy: password rotation period",
+      "ms": 24090.440600000875,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 375,
-      "output_tokens": 279
+      "output_tokens": 176,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "acme",
       "question": "What is the escalation contact in our service level agreement?",
-      "ms": 21941.045100000338,
+      "value": "the Customer Success Manager",
+      "answer": "The escalation contact in our service level agreement is the Customer Success Manager.  \n\n**Document used**: Acme Logistics service level agreement: escalation contact (Internal reference: ACME-0E0BDF)",
+      "ms": 25460.68920000107,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 373,
-      "output_tokens": 178
+      "output_tokens": 242,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "acme",
       "question": "What is the first escalation tier in our escalation workflow?",
-      "ms": 40887.796900002286,
+      "value": "the Account Executive",
+      "answer": "The first escalation tier in our escalation workflow is the Account Executive.\n\nI used the document: Acme Logistics escalation workflow: first escalation tier",
+      "ms": 27687.19130000318,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 373,
-      "output_tokens": 261
+      "output_tokens": 261,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "acme",
       "question": "What is the burst allowance in our API limits?",
-      "ms": 47685.82030000107,
+      "value": "600",
+      "answer": "The burst allowance in our API limits is 600.  \n**Document used**: Acme Logistics API limits: burst allowance",
+      "ms": 31994.648700001562,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 370,
-      "output_tokens": 322
+      "output_tokens": 322,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "acme",
       "question": "What is the refund processing time in our refund policy?",
-      "ms": 33661.31830000086,
+      "value": "10 days",
+      "answer": "The refund processing time in Acme Logistics' refund policy is 10 days.  \n**Document used**: Acme Logistics refund policy: refund processing time (Internal reference: ACME-124080)",
+      "ms": 24652.28449999995,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 364,
-      "output_tokens": 207
+      "output_tokens": 207,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "globex",
       "question": "What is the partial refund limit in our refund policy?",
-      "ms": 34784.373199989204,
+      "value": "$1200",
+      "answer": "The partial refund limit in Globex Health's refund policy is $1200.  \n\nDocument used: Globex Health refund policy: partial refund limit",
+      "ms": 25169.15660000086,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 371,
-      "output_tokens": 202
+      "output_tokens": 202,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "globex",
       "question": "What is the retention owner in our data retention?",
-      "ms": 41098.65909999644,
+      "value": "the Account Executive",
+      "answer": "The retention owner in our data retention is the Account Executive.\n\nI used the document: Globex Health data retention: retention owner (Internal reference: GLBX-9CB4CE)",
+      "ms": 30912.85909999715,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 389,
-      "output_tokens": 261
+      "output_tokens": 261,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "globex",
       "question": "What is the response time for severity 1 in our service level agreement?",
-      "ms": 50906.17129999737,
+      "value": "48 hours",
+      "answer": "The response time for severity 1 in our service level agreement is **48 hours**.  \n\n**Document used**: Globex Health service level agreement: response time for severity 1",
+      "ms": 34430.01809999987,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 419,
-      "output_tokens": 336
+      "output_tokens": 336,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "globex",
       "question": "What is the incident notification deadline in our security policy?",
-      "ms": 49657.76040000492,
+      "value": "12 hours",
+      "answer": "The incident notification deadline in our security policy is 12 hours.\n\nDocument used: Globex Health security policy: incident notification deadline",
+      "ms": 34103.25709999961,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 394,
-      "output_tokens": 341
+      "output_tokens": 341,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "globex",
       "question": "What is the holiday policy in our support hours?",
-      "ms": 45549.542399996426,
+      "value": "twice a year",
+      "answer": "The holiday policy in Globex Health support hours is that holidays occur twice a year. This information is provided in the document titled **Globex Health support hours: holiday policy** (Internal reference: GLBX-E1AF4B).",
+      "ms": 31426.625399999466,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 385,
-      "output_tokens": 307
+      "output_tokens": 307,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "initech",
       "question": "What is the refund processing time in our refund policy?",
-      "ms": 56247.39079999563,
+      "value": "60 days",
+      "answer": "The refund processing time in the refund policy is 60 days.  \nDocument used: **Initech Software refund policy: refund processing time** (Internal reference: INIT-E0030F).",
+      "ms": 39352.02600000048,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 360,
-      "output_tokens": 396
+      "output_tokens": 396,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "initech",
       "question": "What is the deletion request deadline in our data retention?",
-      "ms": 40408.545000012964,
+      "value": "90 days",
+      "answer": "The deletion request deadline in our data retention is 90 days.\n\nDocument used: Initech Software data retention: deletion request deadline",
+      "ms": 26943.47729999936,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 380,
-      "output_tokens": 254
+      "output_tokens": 254,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "initech",
       "question": "What is the annual prepay discount in our pricing?",
-      "ms": 47504.37419999798,
+      "value": "25%",
+      "answer": "The annual prepay discount in Initech Software pricing is 25%.  \nDocument used: Initech Software pricing: annual prepay discount",
+      "ms": 37864.98019999999,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 346,
-      "output_tokens": 322
+      "output_tokens": 322,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "initech",
       "question": "What is the refund approver in our refund policy?",
-      "ms": 42267.728199993144,
+      "value": "the Account Executive",
+      "answer": "The refund approver in the refund policy is the Account Executive.  \nDocument used: Initech Software refund policy: refund approver",
+      "ms": 33743.49430000075,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 360,
-      "output_tokens": 287
+      "output_tokens": 287,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
     },
     {
       "tenant": "initech",
       "question": "What is the uptime commitment in our service level agreement?",
-      "ms": 31059.825999996974,
+      "value": "99.9%",
+      "answer": "The uptime commitment in our service level agreement is 99.9%.\n\nI used the document: Initech Software service level agreement: uptime commitment",
+      "ms": 28885.455400002684,
       "recall": true,
       "answer_hit": true,
       "wrong_block": false,
       "input_tokens": 402,
-      "output_tokens": 173
+      "output_tokens": 173,
+      "judge": "correct",
+      "judge_reply": "CORRECT"
+    }
+  ],
+  "agent_rows": [
+    {
+      "tenant": "acme",
+      "kind": "ticket",
+      "question": "Show me ticket T-1009",
+      "expect": "Dashboard loads slowly",
+      "answer": "Here's the details for ticket **T-1009** (Acme Logistics):\n\n**Issue**: Dashboard loads slowly  \n**Customer**: customer9@acme-client.example.com  \n**Reported timeframe**: Started this week  \n**Ticket reference**: ACME-5C1FE2  \n\nLet me know if you'd like to take further action on this ticket!",
+      "ms": 66631.30070000261,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "search",
+      "question": "Search our knowledge base for the insurance minimum",
+      "expect": "$500",
+      "answer": "The insurance minimum for Acme Logistics vendor management is **$500**. This applies to every Acme Logistics customer account covered under vendor management (Internal reference: ACME-0836BD). \n\n*Note: Other sections like pricing minimum seat count ($100) and API request limits (25 requests/minute) are unrelated to insurance requirements.*",
+      "ms": 85064.94369999928,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "acme",
+      "kind": "note",
+      "question": "Add a note to ticket T-1010: customer confirmed the fix",
+      "expect": "T-1010",
+      "answer": "The note \"customer confirmed the fix\" has been successfully added to ticket T-1010. Let me know if you need anything else!",
+      "ms": 73490.1841000028,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "ticket",
+      "question": "Show me ticket T-2009",
+      "expect": "Dashboard loads slowly",
+      "answer": "Here's the ticket information for T-2009 in Globex Health:\n\n**Ticket ID:** T-2009  \n**Tenant:** globex  \n**Issue:** Dashboard loads slowly  \n**Customer:** customer9@globex-client.example.com  \n**Reported:** This week  \n**Ticket Reference:** GLBX-E1925E  \n\nLet me know if you'd like to take further action (e.g., add notes, escalate, or investigate).",
+      "ms": 54918.83649999727,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "search",
+      "question": "Search our knowledge base for the deletion request deadline",
+      "expect": "30 days",
+      "answer": "The deletion request deadline for Globex Health is **30 days**. This applies to every Globex Health customer account covered by the data retention policy. Internal reference: GLBX-190632.",
+      "ms": 89557.6273000006,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "globex",
+      "kind": "note",
+      "question": "Add a note to ticket T-2012: customer confirmed the fix",
+      "expect": "T-2012",
+      "answer": "The note has been added to ticket T-2012. Customer confirmed the fix.",
+      "ms": 51905.848700000206,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "ticket",
+      "question": "Show me ticket T-3012",
+      "expect": "Sandbox expired early",
+      "answer": "Here's ticket T-3012 [initech] details:\n- **Issue**: Sandbox expired early\n- **Customer**: customer12@initech-client.example.com\n- **Reported**: This week\n- **Ticket reference**: INIT-4CD23D\n\nLet me know if you need further assistance!",
+      "ms": 124606.42230000303,
+      "done": false,
+      "wrong_block": false,
+      "tool_error": true,
+      "tool_calls": [
+        "get_ticket",
+        "get_ticket"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "search",
+      "question": "Search our knowledge base for the enterprise discount",
+      "expect": "12%",
+      "answer": "We found that Initech Software offers a **12% enterprise discount** for all customer accounts covered by their pricing. Internal reference: `INIT-DABE24`. \n\nThis search also revealed additional pricing details (e.g., 25% annual prepay discount and 10% service credit), but your query specifically focused on the enterprise discount. Let me know if you'd like further clarification!",
+      "ms": 98976.17970000283,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "search_docs"
+      ]
+    },
+    {
+      "tenant": "initech",
+      "kind": "note",
+      "question": "Add a note to ticket T-3005: customer confirmed the fix",
+      "expect": "T-3005",
+      "answer": "The note \"customer confirmed the fix\" has been successfully added to ticket T-3005. Let me know if you need anything else!",
+      "ms": 70249.42009999722,
+      "done": true,
+      "wrong_block": false,
+      "tool_error": false,
+      "tool_calls": [
+        "create_note"
+      ]
     }
   ]
 }
