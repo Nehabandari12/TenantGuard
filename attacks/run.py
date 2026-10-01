@@ -331,6 +331,11 @@ def main() -> None:
                     try:
                         rec = run_check(case, rep, state, registry)
                         break
+                    except SetupFailed as exc:
+                        # Nothing was tested. Recorded as an error (shown in the table, retried on resume),
+                        # never as "no leak", and the rest of an unattended run carries on.
+                        rec = error_record(case, rep, str(exc))
+                        break
                     except SERVER_DOWN as exc:
                         # The app or MCP server died mid-check (on a memory-starved machine, a native
                         # crash). Restart both and re-run the whole check once from a clean reset.
