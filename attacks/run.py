@@ -227,7 +227,10 @@ def _run(step: dict, who: str, r: redis.Redis) -> tuple[list[dict], str, int]:
     if ep == "mcp":
         bearer = token(who) if step.get("auth") == "login" else None
         text = asyncio.run(mcp_call(step["tool"], step["args"], bearer))
-        return [{"channel": "final_output", "content": text}], text, mcp_outcome_status(text, bearer)
+        status = mcp_outcome_status(text, bearer)
+        if status in (401, 403):
+            text += f" [refused: HTTP {status}]"  # the evidence that this was a refusal, kept in the record
+        return [{"channel": "final_output", "content": text}], text, status
     if ep == "logs":
         resp = httpx.get(config.APP_URL + "/support/logs", params=step.get("params", {}), headers=headers, timeout=STEP_TIMEOUT)
     else:
