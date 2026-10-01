@@ -158,9 +158,10 @@ or fact is in the answer, the note is on the ticket) with no guard block and no 
 | One B3 agent request ran past the harness's 30-minute timeout (unbounded reasoning, up to 6 model calls), and the run crashed | B3 `injection-02` on Qwen | `OLLAMA_NUM_PREDICT=2048` caps each call; calls under the cap are unchanged at temperature 0 with a fixed seed. The step timeout is now derived from rounds × LLM timeout, so it outlasts anything the app can take. A scored step that times out or returns 5xx is recorded as an *error*, shown in the summary and table, and retried on resume. It is never scored as a pass |
 | A tool call that egress *blocked* was scored as an `external_url` leak, because the agent traced every call before egress checked it | B3 without the canary check, `injection-02` on Qwen: attacker link in `create_note` arguments, call refused, yet flagged | Blocked calls are traced on a separate `tool_call_blocked` channel that the detector doesn't score. Only that one record was affected; it was re-run |
 | The app server died mid-request with no Python traceback, taking the rest of the run with it | Qwen eval, B1: "connection forcibly closed"; the Windows log shows a native crash while system commit was at 42.9 of 44.7 GB | The runner restarts both servers and re-runs the whole check once from a clean reset (a second failure is an error). The eval retries the question once. Server logs are appended, so a crash's output survives the restart |
+| Two Qwen calls in a row ran past the 10-minute LLM timeout while other CPU-heavy work shared the machine. The second hit a setup step, and the `SetupFailed` it raised stopped the whole unattended run | Extending Qwen to 78 checks, B2 `memory-08`/`memory-09` | A failed setup step is now recorded as an error check, like a timed-out scored step: shown in the table, retried on resume, never scored. Nothing else heavy runs on the machine during a Qwen run |
 
 The expired-token bug is the instructive one: a harness failure that produced exactly the number you want
-to see. Setup failures now stop the run.
+to see. A failed setup is recorded as an error, never as a pass.
 
 ## Running a real model
 
