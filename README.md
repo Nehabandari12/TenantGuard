@@ -36,7 +36,8 @@ were built.
 78 checks, 13 per route, on two models: a real one (**Qwen3 4B**, local through Ollama) and an offline **mock**
 that obeys any instruction it sees (the worst case). Leak rate, answers-only / all-channels. No check errored
 in any run. Full tables: [results/qwen3-4b/RESULTS.md](results/qwen3-4b/RESULTS.md),
-[results/mock/RESULTS.md](results/mock/RESULTS.md).
+[results/mock/RESULTS.md](results/mock/RESULTS.md). Six more checks, one per route that asks for the reply in an encoded form (base64, spaced out,
+reversed), were added on 1 Oct 2026; their results are being run and will be added to these tables.
 
 **Qwen3 4B**
 
