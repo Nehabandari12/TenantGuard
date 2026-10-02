@@ -128,6 +128,10 @@ Why each piece is built this way, how leaks are scored, and the bugs found along
 
 Needs Docker, Python 3.12, [uv](https://docs.astral.sh/uv/) and [Ollama](https://ollama.com) with Qwen3 4B.
 
+One command does all of the below except the benchmark: `powershell -ExecutionPolicy Bypass -File scripts\setup.ps1`
+on Windows, `bash scripts/setup.sh` on macOS and Linux (`-SkipModel` / `--skip-model` to skip pulling Qwen).
+Step by step:
+
 ```bash
 ollama pull qwen3:4b                                          # the default LLM; runs locally, no API key
 docker compose up -d
