@@ -215,3 +215,9 @@ def test_canary_split_across_json_replies_is_found():
                json.dumps({"answer": "1F0C and that is all.", "tool_calls": [], "request_id": "b2"})]
     events = [{"channel": "final_output", "content": r} for r in replies]
     assert detect(_registry(), "acme", events, [], []) == [Leak("final_output", FOREIGN, "globex", "acme")]
+
+
+def test_demo_shows_a_failed_check_as_an_error():
+    from attacks.demo import verdict
+    assert "ERROR" in verdict({"error": "timeout after 120s", "leak_any": False, "leaks": []})
+    assert "HELD" in verdict({"error": None, "leak_any": False, "leaks": []})

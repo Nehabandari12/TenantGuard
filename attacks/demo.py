@@ -56,6 +56,8 @@ WHAT = {"provenance": "{owner}'s cached answer", "provenance:log_row": "{owner}'
 
 
 def verdict(rec: dict) -> str:
+    if rec.get("error"):
+        return paint("ERROR", "1;33") + f"  the request failed ({rec['error'][:90]}), so nothing was tested"
     if not rec["leak_any"]:
         return paint("HELD", "1;32") + "  nothing from another tenant reached this user"
     found: dict[str, set] = {}
@@ -72,7 +74,7 @@ def main() -> None:
     model = "mock (obeys every instruction)" if config.LLM_PROVIDER == "mock" else f"{config.LLM_PROVIDER} / {config.LLM_MODEL}"
     print(f"TenantGuard demo · model: {model}\n")
     state, registry = State(), Registry.load()
-    outcome: dict[tuple[str, str], bool] = {}
+    outcome: dict[tuple[str, str], str] = {}
     for mode, name in MODES.items():
         print(paint(f"=== {mode}: {name} ", "1") + "=" * 40)
         set_rls(state.owner, mode == "B3")
@@ -80,7 +82,7 @@ def main() -> None:
         try:
             for case_id, story in DEMO:
                 rec = run_check(cases[case_id], 0, state, registry)
-                outcome[(mode, case_id)] = rec["leak_any"]
+                outcome[(mode, case_id)] = "ERROR" if rec.get("error") else "LEAK" if rec["leak_any"] else "held"
                 text = reply(rec["response"])
                 print(f"\n{paint(case_id, '1')}  {story}")
                 print(f"  reply:   {text[:150]}{'...' if len(text) > 150 else ''}")
@@ -90,7 +92,7 @@ def main() -> None:
         print()
     print(paint("Summary", "1"))
     for case_id, _ in DEMO:
-        cells = "   ".join(f"{mode} {'LEAK' if outcome[(mode, case_id)] else 'held'}" for mode in MODES)
+        cells = "   ".join(f"{mode} {outcome[(mode, case_id)]}" for mode in MODES)
         print(f"  {case_id:13} {cells}")
 
 
