@@ -217,6 +217,15 @@ def test_canary_split_across_json_replies_is_found():
     assert detect(_registry(), "acme", events, [], []) == [Leak("final_output", FOREIGN, "globex", "acme")]
 
 
+def test_failed_checks_are_left_out_of_the_rates():
+    from attacks.run import summarize
+    records = [{"route": "tools", "leak_answer": True, "leak_any": True},
+               {"route": "tools", "leak_answer": False, "leak_any": False},
+               {"route": "tools", "leak_answer": False, "leak_any": False, "error": "timeout"}]
+    s = summarize(records)["ALL"]
+    assert (s["runs"], s["leak_any"], s["errors"]) == (2, 1, 1)
+
+
 def test_demo_shows_a_failed_check_as_an_error():
     from attacks.demo import verdict
     assert "ERROR" in verdict({"error": "timeout after 120s", "leak_any": False, "leaks": []})

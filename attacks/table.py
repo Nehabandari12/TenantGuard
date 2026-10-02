@@ -50,7 +50,7 @@ def main() -> None:
                       + "; ".join(f"{k}: {len(v)}" + (f" ({', '.join(v)})" if v else "") for k, v in unstable.items()) + "."]
         errored = {LABELS[l]: r["summary"]["ALL"].get("errors", 0) for l, r in runs.items() if r["summary"]["ALL"].get("errors")}
         if errored:
-            lines += ["", "Checks that errored (timed out; counted as runs but not as leaks, so they could hide one): "
+            lines += ["", "Checks that failed (timed out or hit a server error), left out of the rates above: "
                       + ", ".join(f"{k}: {v}" for k, v in errored.items()) + "."]
         b2 = runs.get("B2", {}).get("summary", {}).get("ALL")
         if b2:

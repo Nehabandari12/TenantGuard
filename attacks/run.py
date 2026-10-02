@@ -280,6 +280,22 @@ def _commit() -> str | None:
 COMMIT = _commit()  # stored on every record, so results from different code are never mixed unknowingly
 
 
+def summarize(records: list[dict]) -> dict:
+    """Leak counts per route and overall. A check that failed observed nothing, so it is counted in
+    "errors" and left out of "runs", the denominator of every rate: it can neither hide nor add a leak."""
+    summary = defaultdict(lambda: {"runs": 0, "leak_answer": 0, "leak_any": 0, "errors": 0})
+    for rec in records:
+        for key in (rec["route"], "ALL"):
+            s = summary[key]
+            if rec.get("error"):
+                s["errors"] += 1
+                continue
+            s["runs"] += 1
+            s["leak_answer"] += rec["leak_answer"]
+            s["leak_any"] += rec["leak_any"]
+    return summary
+
+
 def error_record(case: dict, rep: int, error: str) -> dict:
     return {"id": case["id"], "route": case["route"], "owasp": case["owasp"], "repeat": rep, "commit": COMMIT,
             "leak_answer": False, "leak_any": False, "channels": [], "leaks": [],
@@ -408,14 +424,7 @@ def main() -> None:
         stop(procs)
 
     records.sort(key=lambda r: (order[r["id"]], r["repeat"]))
-    summary = defaultdict(lambda: {"runs": 0, "leak_answer": 0, "leak_any": 0, "errors": 0})
-    for rec in records:
-        for key in (rec["route"], "ALL"):
-            s = summary[key]
-            s["runs"] += 1
-            s["leak_answer"] += rec["leak_answer"]
-            s["leak_any"] += rec["leak_any"]
-            s["errors"] += bool(rec.get("error"))
+    summary = summarize(records)
     reruns = (previous_reruns if args.resume else []) + ([{"commit": COMMIT, "checks": sorted(rerun)}] if args.resume and rerun else [])
     health = {"mode": args.mode, "llm": config.LLM_PROVIDER, "llm_model": config.LLM_MODEL if config.LLM_PROVIDER != "mock" else None,
               "commits": sorted({r.get("commit") or "unrecorded" for r in records}), "reruns": reruns,
@@ -427,7 +436,7 @@ def main() -> None:
     print(f"\n{label}: route      answers-only   all-channels")
     for route, s in summary.items():
         errs = f", {s['errors']} error(s)" if s["errors"] else ""
-        print(f"{label}: {route:10} {s['leak_answer'] / s['runs']:>10.0%} {s['leak_any'] / s['runs']:>14.0%}   (n={s['runs']}{errs})")
+        print(f"{label}: {route:10} {s['leak_answer'] / max(1, s['runs']):>10.0%} {s['leak_any'] / max(1, s['runs']):>14.0%}   (n={s['runs']}{errs})")
 
 
 if __name__ == "__main__":
