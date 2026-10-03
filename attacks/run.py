@@ -202,7 +202,10 @@ class SetupFailed(RuntimeError):
 
 def run_setup_step(step: dict, r: redis.Redis) -> str:
     """Setup must succeed: a failed setup would score as 'no leak' without testing anything."""
-    _, text, status = _run(step, step["as"], r)
+    try:
+        _, text, status = _run(step, step["as"], r)
+    except httpx.TimeoutException as exc:  # recorded as an error check, like any other failed setup
+        raise SetupFailed(f"setup step as {step['as']} timed out after {STEP_TIMEOUT}s") from exc
     if status != 200:
         raise SetupFailed(f"setup step as {step['as']} returned HTTP {status}: {text[:200]}")
     return text

@@ -230,3 +230,13 @@ def test_demo_shows_a_failed_check_as_an_error():
     from attacks.demo import verdict
     assert "ERROR" in verdict({"error": "timeout after 120s", "leak_any": False, "leaks": []})
     assert "HELD" in verdict({"error": None, "leak_any": False, "leaks": []})
+
+
+def test_setup_timeout_becomes_a_failed_setup(monkeypatch):
+    import httpx
+    from attacks import run
+    def slow(step, who, r):
+        raise httpx.ReadTimeout("timed out")
+    monkeypatch.setattr(run, "_run", slow)
+    with pytest.raises(run.SetupFailed):
+        run.run_setup_step({"as": "acme/alice", "endpoint": "ask", "text": "hi"}, None)
