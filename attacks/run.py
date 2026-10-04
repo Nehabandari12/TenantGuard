@@ -370,7 +370,9 @@ def main() -> None:
         # An interrupted run continues from its partial file. A finished one is extended with the
         # checks added to the case file since it ran, so they don't force a re-run of the rest.
         source = partial_path if partial_path.exists() else final_path if final_path.exists() else None
-        if final_path.exists():
+        # The finished file's re-run history carries over only when its records are being reused: resuming
+        # it, or resuming a partial file that a --rerun of it started. A fresh run's partial owes it nothing.
+        if final_path.exists() and (source == final_path or rerun):
             previous_reruns = json.loads(final_path.read_text(encoding="utf-8")).get("meta", {}).get("reruns", [])
         if source is not None:
             saved = json.loads(source.read_text(encoding="utf-8"))
