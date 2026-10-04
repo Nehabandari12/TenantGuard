@@ -179,9 +179,10 @@ checks. The mock's outcomes on the 78 older checks were identical to its earlier
 ## Running a real model
 
 Local Qwen3 4B through Ollama, temperature 0, fixed seed. On CPU (about 14 tokens/s, with roughly 300
-reasoning tokens per call) `/ask` takes about a minute and a one-tool `/agent` call a bit more, so the 78
-checks take about two and a half hours per mode. An earlier run repeated B1 three times on 78 checks; only
-2 (`injection-03`, `tools-03`) changed outcome. The Qwen utility eval uses 51 questions and 18 agent tasks per
+reasoning tokens per call) `/ask` takes about a minute and a one-tool `/agent` call a bit more, so the 84
+checks take about two and a half hours per mode. B3 ran three times on all 84 checks; none of the 252 runs
+leaked or errored. An earlier run repeated B1 three times on 78 checks; only 2 (`injection-03`, `tools-03`)
+changed outcome. The Qwen utility eval uses 51 questions and 18 agent tasks per
 mode (the mock: 60 and 27). Paid APIs stay off unless `TG_ALLOW_PAID_LLM=1`, and there is no fallback between providers.
 
 Something only the real model showed: in B0, Qwen's answer used only Initech's document, but the
@@ -232,7 +233,7 @@ attribution, but it wasn't needed. From the unlicensed ones only the ideas were 
 | mem0 | A mem0-shaped Redis store | mem0 needs its own LLM and vector-store setup; the plan allowed a plain store |
 | LlamaFirewall on B2's inputs | Llama Prompt Guard 2 86M (LlamaFirewall's PromptGuard model) through transformers, next to a keyword filter | The llamafirewall package also pulls in CodeShield and scanners B2 doesn't use |
 | `variants.py`: encoded, split and translated copies of each input | One encoded-reply check per route | See [Decided against](#decided-against) |
-| Each attack run 3 times | Each check once in the final runs; an earlier Qwen run repeated B1 three times (78 checks, 2 changed outcome); the mock is deterministic | CPU time: a Qwen mode takes about two and a half hours |
+| Each attack run 3 times | Qwen B3 three times on all 84 checks (none of 252 runs leaked); the other Qwen modes once; an earlier Qwen run repeated B1 three times (78 checks, 2 changed outcome); the mock is deterministic | CPU time: a Qwen mode takes about two and a half hours |
 | B2 with LlamaFirewall on the real model | Prompt Guard 2 on the mock only | It flags none of the 286 inputs, so on Qwen B2 takes exactly the keyword-filter B2's path (a partial Qwen run blocked no input and matched B2 on 39 of 40 checks, the one difference being the model's own run-to-run variation; it ran 3.5 times slower, so it was stopped) |
 | Judge checked against ~50 hand-graded answers | An LLM judge (the same local model) graded the 60 answers of the 15-question run, agreed with the string match on all of them, and rejects deliberately wrong answers. The 51-question set is scored by string match with every miss read | The judge needs about three minutes per answer on this CPU; with reasoning turned off it is faster but grades wrong answers as correct. Hand grading needs the author's time; the answers are saved in `results/*/eval_*.json` |
 | docker-compose with the app and MCP server | Compose runs Postgres and Redis; the harness starts the app and MCP server for each mode | Each mode needs freshly started servers with their own settings |

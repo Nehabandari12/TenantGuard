@@ -34,13 +34,14 @@ were built.
 ## Results
 
 Two models: an offline **mock** that obeys any instruction it sees (the worst case), and a real one
-(**Qwen3 4B**, local through Ollama). Both ran all 84 checks (14 per route) from scratch with the final code,
-on 2-3 Oct 2026, one run per check. Leak rate, answers-only / all-channels. No check errored. Full tables:
+(**Qwen3 4B**, local through Ollama). Both ran all 84 checks (14 per route) from scratch with the final code
+on 2-4 Oct 2026. On Qwen, B3 ran three times (252 runs) and the other modes once. Leak rate, answers-only /
+all-channels. No check errored. Full tables:
 [results/qwen3-4b/RESULTS.md](results/qwen3-4b/RESULTS.md), [results/mock/RESULTS.md](results/mock/RESULTS.md).
 
 **Qwen3 4B, 84 checks**
 
-| Route | OWASP | B0 | B1 | B2, keyword filter | B3 | B3, egress canary check off |
+| Route | OWASP | B0 | B1 | B2, keyword filter | B3 (3 runs) | B3, egress canary check off |
 |---|---|---|---|---|---|---|
 | search | LLM08 | 0% / 100% | 0% / 36% | 0% / 36% | 0% / 0% | 0% / 0% |
 | cache | LLM08 | 93% / 93% | 93% / 93% | 93% / 93% | 0% / 0% | 0% / 0% |
@@ -64,11 +65,12 @@ on 2-3 Oct 2026, one run per check. Leak rate, answers-only / all-channels. No c
 
 What the runs show:
 
-- **B3 held at 0% on every check, on both models**, and still 0% with the egress canary check turned off,
-  so the protection comes from making other tenants' data unreachable, not from egress recognising canaries.
-  Every B3 outcome is an explicit denial (403, an MCP token refused with HTTP 401, "not found or not
-  accessible") or the caller's own data. All five direct tool-server calls in B3 are recorded as refused with
-  HTTP 401, so none of the zeros comes from a server that wasn't answering.
+- **B3 held at 0% on every check, on both models**, in all three Qwen runs (none of 252 runs leaked), and
+  still 0% with the egress canary check turned off, so the protection comes from making other tenants' data
+  unreachable, not from egress recognising canaries. Every B3 outcome is an explicit denial (403, an MCP
+  token refused with HTTP 401, "not found or not accessible") or the caller's own data. All 15 direct
+  tool-server calls in Qwen's B3 runs are recorded as refused with HTTP 401, so none of the zeros comes from
+  a server that wasn't answering.
 - **The tutorial fix (B1) still leaks in 57% of checks on Qwen and 70% on the mock**, through the semantic
   cache, memory keyed by usernames that repeat across companies, tools that trust a model-supplied
   `tenant_id`, the tenant-switch header and the log viewer's `?tenant=` parameter. It does stop plain ID
@@ -179,9 +181,9 @@ per check by default; pass `--repeats 3` to measure run-to-run variation.
 - The mock follows any instruction in its context, so it's an upper bound on model misbehaviour, not a
   realistic model. Qwen3 4B is a real but small model; a larger model may follow planted instructions more
   or less often.
-- Each check ran once in the final runs. An earlier Qwen run repeated B1 three times and only 2 of 78
-  checks changed outcome; which injection checks Qwen obeys does vary from run to run. The B3 zeros don't
-  depend on the model's behaviour.
+- On Qwen, B3 ran three times and the other modes once. An earlier Qwen run repeated B1 three times and
+  only 2 of 78 checks changed outcome; which injection checks Qwen obeys does vary from run to run. The B3
+  zeros don't depend on the model's behaviour.
 - Canary detection undercounts leaks that a model paraphrases. Provenance rules cover the cache, memory and
   log viewer, and all-channels scoring catches paraphrase on retrieval and tool results. Answers-only
   numbers for a real model are therefore a lower bound.
