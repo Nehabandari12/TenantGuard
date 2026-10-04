@@ -143,7 +143,7 @@ docker compose up -d
 uv venv --python 3.12 .venv && uv pip install --python .venv -e ".[embed,pii,dev]"
 .venv/Scripts/python -m spacy download en_core_web_sm        # Presidio model (bin/ on macOS/Linux)
 .venv/Scripts/python -m app.seed                              # 3 companies, 150 docs, 60 tickets, 222 canaries
-.venv/Scripts/python -m pytest -q                             # 34 unit tests
+.venv/Scripts/python -m pytest -q                             # 38 unit tests
 .venv/Scripts/python -m tenantguard.admin rls on && .venv/Scripts/python -m tenantguard.rls_audit   # RLS audit (B3 state)
 .venv/Scripts/python -m attacks.bench                         # everything below, resumable; writes results/<model>/
 ```
