@@ -34,22 +34,21 @@ were built.
 ## Results
 
 Two models: an offline **mock** that obeys any instruction it sees (the worst case), and a real one
-(**Qwen3 4B**, local through Ollama). The mock ran all 84 checks (14 per route) in a fresh run on 2 Oct 2026.
-Qwen ran the first 78; the six encoded-reply checks were added afterwards and ran on the mock only. Qwen's B1
-ran three times. Leak rate, answers-only / all-channels. No check errored. Full tables:
+(**Qwen3 4B**, local through Ollama). Both ran all 84 checks (14 per route) from scratch with the final code,
+on 2-3 Oct 2026, one run per check. Leak rate, answers-only / all-channels. No check errored. Full tables:
 [results/qwen3-4b/RESULTS.md](results/qwen3-4b/RESULTS.md), [results/mock/RESULTS.md](results/mock/RESULTS.md).
 
-**Qwen3 4B, 78 checks**
+**Qwen3 4B, 84 checks**
 
-| Route | OWASP | B0 | B1 (3 runs) | B2, keyword filter | B3 | B3, egress canary check off |
+| Route | OWASP | B0 | B1 | B2, keyword filter | B3 | B3, egress canary check off |
 |---|---|---|---|---|---|---|
-| search | LLM08 | 8% / 100% | 0% / 31% | 0% / 31% | 0% / 0% | 0% / 0% |
-| cache | LLM08 | 100% / 100% | 100% / 100% | 100% / 100% | 0% / 0% | 0% / 0% |
-| memory | ASI06 | 54% / 100% | 56% / 77% | 62% / 77% | 0% / 0% | 0% / 0% |
-| tools | ASI02/ASI03 | 85% / 100% | 41% / 49% | 46% / 54% | 0% / 0% | 0% / 0% |
-| injection | LLM01/ASI01 | 15% / 69% | 0% / 33% | 0% / 38% | 0% / 0% | 0% / 0% |
-| logs | LLM02 | 100% / 100% | 62% / 62% | 62% / 62% | 0% / 0% | 0% / 0% |
-| **all** | | 60% / 95% | 43% / 59% | 45% / 60% | **0% / 0%** | **0% / 0%** |
+| search | LLM08 | 0% / 100% | 0% / 36% | 0% / 36% | 0% / 0% | 0% / 0% |
+| cache | LLM08 | 93% / 93% | 93% / 93% | 93% / 93% | 0% / 0% | 0% / 0% |
+| memory | ASI06 | 50% / 100% | 50% / 79% | 57% / 79% | 0% / 0% | 0% / 0% |
+| tools | ASI02/ASI03 | 71% / 86% | 36% / 43% | 43% / 50% | 0% / 0% | 0% / 0% |
+| injection | LLM01/ASI01 | 0% / 50% | 0% / 29% | 0% / 29% | 0% / 0% | 0% / 0% |
+| logs | LLM02 | 100% / 100% | 64% / 64% | 64% / 64% | 0% / 0% | 0% / 0% |
+| **all** | | 52% / 88% | 40% / 57% | 43% / 58% | **0% / 0%** | **0% / 0%** |
 
 **Mock model (worst-case obedient), 84 checks**
 
@@ -68,26 +67,30 @@ What the runs show:
 - **B3 held at 0% on every check, on both models**, and still 0% with the egress canary check turned off,
   so the protection comes from making other tenants' data unreachable, not from egress recognising canaries.
   Every B3 outcome is an explicit denial (403, an MCP token refused with HTTP 401, "not found or not
-  accessible") or the caller's own data.
-- **The tutorial fix (B1) still leaks in 59% of runs on Qwen and 70% on the mock**, through the semantic
+  accessible") or the caller's own data. All five direct tool-server calls in B3 are recorded as refused with
+  HTTP 401, so none of the zeros comes from a server that wasn't answering.
+- **The tutorial fix (B1) still leaks in 57% of checks on Qwen and 70% on the mock**, through the semantic
   cache, memory keyed by usernames that repeat across companies, tools that trust a model-supplied
   `tenant_id`, the tenant-switch header and the log viewer's `?tenant=` parameter. It does stop plain ID
-  guessing and unauthenticated tool calls. Across Qwen's three B1 runs only 2 of 78 checks changed outcome.
+  guessing and unauthenticated tool calls. In an earlier Qwen run that repeated B1 three times, only 2 of 78
+  checks changed outcome between runs.
 - **Input firewalls don't see these attacks.** Neither B2 firewall changed a single result. Llama Prompt
   Guard 2 86M scores an obvious "ignore your previous instructions" at 0.999, yet flagged none of the 286
   inputs the benchmark sends (highest score 0.18). The cross-tenant requests read like ordinary ones ("show
   me ticket T-1005", a header, a `?tenant=` parameter), and planted instructions arrive in tool results,
   which an input firewall never looks at.
 - **A real model hides leaks from answer-only audits.** Qwen rephrases instead of repeating reference codes.
-  In B0 its search answers looked clean (8%) while all of them had pulled other companies' documents into
-  context (100%). 35% of Qwen's B0 checks and 16% of its B1 runs leak only somewhere other than the answer:
+  In B0 its search answers looked clean (0%) while all of them had pulled other companies' documents into
+  context (100%). 36% of Qwen's B0 checks and 17% of its B1 checks leak only somewhere other than the answer:
   retrieval, tool results, memory, a note in another tenant's ticket, or an outside link.
 - **Encoded replies don't hide a leak.** Six checks ask for the reply in base64, spaced out or reversed. On
-  the mock all six leak in B0 and B1 and are caught only because the detector decodes them; B3 holds.
-- **How the user asks decides whether a real model obeys planted text.** Asked to "handle" a poisoned ticket,
-  Qwen followed its instructions. Asked to summarize it, explain it or reply to it, it didn't, even in B0
-  (the only 4 of 78 checks that didn't leak there). The mock follows them every time, which is why it's the
-  upper bound.
+  the mock all six leak in B0 and B1 and are caught only because the detector decodes them; B3 holds. Qwen
+  mostly returned empty answers when asked to encode, so on Qwen these checks leak only through retrieval,
+  memory and log rows.
+- **How the user asks changes whether a real model obeys planted text.** Asked to summarize, explain or
+  reply to a poisoned ticket, Qwen never followed the planted instructions, in any mode or run. Asked to
+  handle or show it, it often did, though not every time, and which of those checks leaked differed between
+  runs. The mock follows planted instructions every time, which is why it's the upper bound.
 - **Normal use is unaffected.** On 51 normal questions per mode Qwen had 100% recall@5 and 0 wrong blocks in
   every mode, and B3's answers were identical to B2's, which has no TenantGuard at all. The string match
   scored 96-98% in B1-B3, and every miss there was wording, not a wrong fact ("1 hour" for the seed's
@@ -176,13 +179,14 @@ per check by default; pass `--repeats 3` to measure run-to-run variation.
 - The mock follows any instruction in its context, so it's an upper bound on model misbehaviour, not a
   realistic model. Qwen3 4B is a real but small model; a larger model may follow planted instructions more
   or less often.
-- On Qwen only B1 ran three times (2 of 78 checks changed outcome between runs); the other modes ran once.
-  The B3 zeros don't depend on the model's behaviour, and the mock confirms them on all 84 checks.
+- Each check ran once in the final runs. An earlier Qwen run repeated B1 three times and only 2 of 78
+  checks changed outcome; which injection checks Qwen obeys does vary from run to run. The B3 zeros don't
+  depend on the model's behaviour.
 - Canary detection undercounts leaks that a model paraphrases. Provenance rules cover the cache, memory and
   log viewer, and all-channels scoring catches paraphrase on retrieval and tool results. Answers-only
   numbers for a real model are therefore a lower bound.
-- On a CPU-only machine Qwen3 4B takes about a minute per request, so Qwen ran 78 of the 84 checks, and
-  its utility eval uses 51 questions and 18 agent tasks per mode (the mock: 60 and 27).
+- On a CPU-only machine Qwen3 4B takes about a minute per request, so its utility eval uses 51 questions
+  and 18 agent tasks per mode (the mock: 60 and 27), and B2 with Prompt Guard 2 ran on the mock only.
 - There are no encoded or translated copies of the attack inputs. Neither input firewall caught even the
   plain inputs, and B3 doesn't read the input to decide isolation, so they would change no result (see
   [docs/DESIGN.md](docs/DESIGN.md#decided-against)). The detector and egress do decode base64, hex, URL,
