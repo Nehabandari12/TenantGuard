@@ -1,20 +1,18 @@
 # Results
 
-LLM: `ollama` / qwen3:4b, repeats per check: B0 no protection 1, B1 app tenant filter 3, B2 B1 + keyword firewall 1, B3 TenantGuard 1, B3 without egress canary check 1. Cell = leak rate over all runs, answers-only / all-channels.
+LLM: `ollama` / qwen3:4b, repeats per check: 1. Cell = leak rate over all runs, answers-only / all-channels.
 
 | Route | OWASP | B0 no protection | B1 app tenant filter | B2 B1 + keyword firewall | B3 TenantGuard | B3 without egress canary check |
 |---|---|---|---|---|---|---|
-| search | LLM08 | 8% / 100% | 0% / 31% | 0% / 31% | 0% / 0% | 0% / 0% |
-| cache | LLM08 | 100% / 100% | 100% / 100% | 100% / 100% | 0% / 0% | 0% / 0% |
-| memory | ASI06 | 54% / 100% | 56% / 77% | 62% / 77% | 0% / 0% | 0% / 0% |
-| tools | ASI02/ASI03 | 85% / 100% | 41% / 49% | 46% / 54% | 0% / 0% | 0% / 0% |
-| injection | LLM01/ASI01 | 15% / 69% | 0% / 33% | 0% / 38% | 0% / 0% | 0% / 0% |
-| logs | LLM02 | 100% / 100% | 62% / 62% | 62% / 62% | 0% / 0% | 0% / 0% |
-| **all** |  | 60% / 95% | 43% / 59% | 45% / 60% | 0% / 0% | 0% / 0% |
+| search | LLM08 | 0% / 100% | 0% / 36% | 0% / 36% | 0% / 0% | 0% / 0% |
+| cache | LLM08 | 93% / 93% | 93% / 93% | 93% / 93% | 0% / 0% | 0% / 0% |
+| memory | ASI06 | 50% / 100% | 50% / 79% | 57% / 79% | 0% / 0% | 0% / 0% |
+| tools | ASI02/ASI03 | 71% / 86% | 36% / 43% | 43% / 50% | 0% / 0% | 0% / 0% |
+| injection | LLM01/ASI01 | 0% / 50% | 0% / 29% | 0% / 29% | 0% / 0% | 0% / 0% |
+| logs | LLM02 | 100% / 100% | 64% / 64% | 64% / 64% | 0% / 0% | 0% / 0% |
+| **all** |  | 52% / 88% | 40% / 57% | 43% / 58% | 0% / 0% | 0% / 0% |
 
-Checks whose all-channels outcome changed between repeats: B1 app tenant filter: 2 (injection-03, tools-03).
-
-Hidden leaks in B2 (caught by all-channels scoring, missed by answers-only): 12 of 78 runs (15%).
+Hidden leaks in B2 (caught by all-channels scoring, missed by answers-only): 13 of 84 runs (15%).
 
 ## Utility (normal questions)
 
