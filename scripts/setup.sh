@@ -31,7 +31,7 @@ fi
 step "Python environment"
 [ -d .venv ] || uv venv --python 3.12 .venv
 PY=.venv/bin/python; [ -x "$PY" ] || PY=.venv/Scripts/python.exe
-uv pip install --python "$PY" -e ".[embed,pii,dev]"
+uv pip install --python "$PY" -e ".[embed,pii,dev]" -c constraints.txt
 "$PY" -m spacy download en_core_web_sm
 
 step "Seeding 3 companies (150 documents, 60 tickets, 222 canaries)"

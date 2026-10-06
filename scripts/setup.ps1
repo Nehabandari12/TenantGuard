@@ -21,7 +21,7 @@ if (-not $SkipServices) {
 
 Step "Python environment"
 if (-not (Test-Path .venv)) { uv venv --python 3.12 .venv }
-uv pip install --python .venv\Scripts\python.exe -e ".[embed,pii,dev]"
+uv pip install --python .venv\Scripts\python.exe -e ".[embed,pii,dev]" -c constraints.txt
 .venv\Scripts\python.exe -m spacy download en_core_web_sm
 
 Step "Seeding 3 companies (150 documents, 60 tickets, 222 canaries)"
