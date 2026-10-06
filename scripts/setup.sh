@@ -21,7 +21,7 @@ need uv "Install it from https://docs.astral.sh/uv/"
 if [ "$skip_services" -eq 0 ]; then
   need docker "Install Docker and start it."
   step "Starting Postgres and Redis"
-  docker compose up -d
+  docker compose up -d || { echo "docker compose failed. If port 55432 or 56379 is taken, set TG_PG_PORT / TG_REDIS_PORT and run this again." >&2; exit 1; }
   for _ in $(seq 60); do
     docker compose ps --format '{{.Health}}' | grep -q starting || break
     sleep 2

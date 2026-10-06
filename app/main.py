@@ -4,6 +4,7 @@ Run: GUARD_MODE=B0 uvicorn app.main:app --port 8000
 The same code serves all four modes; app.config.GUARDS decides which protections run.
 """
 
+import logging
 from contextlib import asynccontextmanager
 
 import redis
@@ -20,10 +21,14 @@ from tenantguard.egress import Egress
 from tenantguard.identity import IdentityMiddleware, Principal, issue_login_token
 
 state: dict = {}
+log = logging.getLogger("tenantguard")
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    config.check_startup()
+    if not config.GUARDS.tenantguard:
+        log.warning("GUARD_MODE=%s is a deliberately vulnerable benchmark baseline: tenants are not isolated", config.MODE.value)
     db.open_pool()
     state["redis"] = redis.Redis.from_url(config.REDIS_URL)
     codes = db.tenant_codes()

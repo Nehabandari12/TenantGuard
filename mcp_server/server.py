@@ -162,6 +162,7 @@ def build() -> MCPServer:
     return server
 
 
+config.check_startup()
 server = build()
 db.open_pool()
 app = server.streamable_http_app(host="127.0.0.1")

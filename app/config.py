@@ -31,9 +31,19 @@ def _env(name: str, default: str) -> str:
 
 MODE = Mode(_env("GUARD_MODE", "B0").upper())
 
-DATABASE_URL = _env("DATABASE_URL", "postgresql://tg_app:app-local-only@localhost:55432/tenantguard")
-OWNER_DATABASE_URL = _env("OWNER_DATABASE_URL", "postgresql://tg_owner:owner-local-only@localhost:55432/tenantguard")
-REDIS_URL = _env("REDIS_URL", "redis://localhost:56379/0")
+# "benchmark" (default): the local experiment. Any mode runs, with the public demo keys below, because
+# B0-B2 exist to be attacked. "protected": refuse to start unless protected_problems() is empty.
+ENV = _env("TG_ENV", "benchmark").lower()
+
+# Host ports of the docker compose services. Windows sometimes reserves 55432 (`netsh interface ipv4
+# show excludedportrange protocol=tcp`); set TG_PG_PORT for both compose and the app to move it.
+# 127.0.0.1, not localhost: compose binds IPv4 loopback only, and on Windows "localhost" tries ::1 first.
+_PG_PORT = _env("TG_PG_PORT", "55432")
+_REDIS_PORT = _env("TG_REDIS_PORT", "56379")
+
+DATABASE_URL = _env("DATABASE_URL", f"postgresql://tg_app:app-local-only@127.0.0.1:{_PG_PORT}/tenantguard")
+OWNER_DATABASE_URL = _env("OWNER_DATABASE_URL", f"postgresql://tg_owner:owner-local-only@127.0.0.1:{_PG_PORT}/tenantguard")
+REDIS_URL = _env("REDIS_URL", f"redis://127.0.0.1:{_REDIS_PORT}/0")
 
 APP_URL = _env("APP_URL", "http://127.0.0.1:8000")
 MCP_URL = _env("MCP_URL", "http://127.0.0.1:8001/mcp")
@@ -41,6 +51,9 @@ MCP_URL = _env("MCP_URL", "http://127.0.0.1:8001/mcp")
 # Synthetic demo secrets. Two separate keys so a login token can never double as an MCP token in B3.
 JWT_SECRET = _env("JWT_SECRET", "local-dev-login-signing-key-change-me")
 MCP_JWT_SECRET = _env("MCP_JWT_SECRET", "local-dev-mcp-signing-key-change-me")
+# Every signing key that appears in this repository; TG_ENV=protected refuses all of them.
+PUBLIC_DEMO_KEYS = frozenset({"local-dev-login-signing-key-change-me", "local-dev-mcp-signing-key-change-me",
+                              "change-me-login-key-at-least-32-bytes-long", "change-me-mcp-key-at-least-32-bytes-long"})
 JWT_ISSUER = "tenantguard-app"
 LOGIN_AUDIENCE = "tenantguard-app"
 MCP_AUDIENCE = _env("MCP_AUDIENCE", MCP_URL)
@@ -95,3 +108,30 @@ def guards(mode: Mode = MODE) -> Guards:
 
 
 GUARDS = guards()
+
+
+def protected_problems() -> list[str]:
+    """Settings that make this process unfit to serve real tenants. TG_ENV=protected refuses to start
+    while any remain. An empty list means the known-unsafe settings are gone, not that the app is
+    production-ready: see SECURITY.md for what the demo login still lacks."""
+    problems = []
+    if MODE is not Mode.B3:
+        problems.append(f"GUARD_MODE={MODE.value} is a deliberately vulnerable benchmark baseline; only B3 isolates tenants")
+    elif not GUARDS.egress_canary:
+        problems.append("TG_EGRESS_CANARY=0 is a benchmark ablation; protected runs keep the egress canary check")
+    for name, key in (("JWT_SECRET", JWT_SECRET), ("MCP_JWT_SECRET", MCP_JWT_SECRET)):
+        if key in PUBLIC_DEMO_KEYS or len(key.encode()) < 32:
+            problems.append(f"{name} is a public demo key or shorter than 32 bytes")
+    if JWT_SECRET == MCP_JWT_SECRET:
+        problems.append("JWT_SECRET and MCP_JWT_SECRET must differ, or a login token could pass as an MCP token")
+    if "app-local-only" in DATABASE_URL:
+        problems.append("DATABASE_URL uses the tg_app password published in sql/001_init.sql")
+    return problems
+
+
+def check_startup() -> None:
+    """Called by the app and the MCP server before they serve anything."""
+    if ENV not in ("benchmark", "protected"):
+        raise RuntimeError(f"TG_ENV={ENV!r}: expected 'benchmark' or 'protected'")
+    if ENV == "protected" and (problems := protected_problems()):
+        raise RuntimeError("TG_ENV=protected refuses to start: " + "; ".join(problems))
