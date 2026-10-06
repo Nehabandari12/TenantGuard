@@ -1,0 +1,28 @@
+name: Dependency audit
+
+# Checks every pinned package in constraints.txt against the PyPI advisory database. Runs weekly
+# too, because new advisories appear for versions that were clean when they were pinned.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
+
+jobs:
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install pip-audit
+        run: pip install pip-audit==2.10.1
+      # The ignored advisories are listed, with the reason, in SECURITY.md.
+      - name: Audit constraints.txt
+        run: >-
+          pip-audit -r constraints.txt --disable-pip --no-deps --progress-spinner off
+          --ignore-vuln PYSEC-2026-3552
+          --ignore-vuln PYSEC-2026-3553
+          --ignore-vuln PYSEC-2026-3554
