@@ -1,6 +1,6 @@
 """LLM judge for the utility eval: does the answer give the asking company's fact?
 
-    python -m eval.judge                  # grades results/<model>/eval_B*.json in place
+    python -m eval.judge                  # grades eval_B*.json in the results folder (runs/<model>/) in place
     python -m eval.judge --model qwen3:4b
 
 `answer_hit` in eval/run_eval.py only checks that the expected value appears somewhere in the answer, so
@@ -50,7 +50,7 @@ def grade(http: httpx.Client, model: str, row: dict) -> tuple[str, str]:
                            answer=row["answer"] or "(empty)")
     r = http.post("/api/chat", json={
         "model": model, "stream": False, "think": config.OLLAMA_THINK,
-        "options": {"temperature": 0, "seed": 0, "num_ctx": config.OLLAMA_NUM_CTX, "num_predict": config.OLLAMA_NUM_PREDICT},
+        "options": {"temperature": config.OLLAMA_TEMPERATURE, "seed": config.OLLAMA_SEED, "num_ctx": config.OLLAMA_NUM_CTX, "num_predict": config.OLLAMA_NUM_PREDICT},
         "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": prompt}],
     })
     r.raise_for_status()

@@ -1,7 +1,7 @@
-"""Build results/<llm>/RESULTS.md from that folder's <mode>.json and eval_<mode>.json.
+"""Build RESULTS.md in the results folder from that folder's <mode>.json and eval_<mode>.json.
 
-    python -m attacks.table                   # current LLM_PROVIDER / LLM_MODEL
-    LLM_PROVIDER=mock python -m attacks.table
+    python -m attacks.table                   # runs/<model>/ for the current LLM_PROVIDER / LLM_MODEL
+    LLM_PROVIDER=mock TG_RESULTS_DIR=results/mock python -m attacks.table    # the published mock table
 """
 
 import json

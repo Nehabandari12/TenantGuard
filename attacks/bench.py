@@ -7,8 +7,9 @@ Steps: attack runs B0-B3, B3 without the egress canary check, utility eval B0-B3
 eval answers (local Ollama models only), results table.
 Each attack step runs only the checks its saved results don't have yet: an interrupted run continues
 from its partial file, and a finished one gets just the checks added to the case file since. Eval steps
-are skipped once finished (rows saved before answers were kept are asked again, for the judge). So the command can simply be re-run after a crash, a reboot or new checks. Progress goes to
-results/<model>/progress.log (the process writes it itself, so it can run detached).
+are skipped once finished (rows saved before answers were kept are asked again, for the judge). So the command can simply be re-run after a crash, a reboot or new checks. Output and progress.log go to
+runs/<model>/ (the process writes the log itself, so it can run detached). The published results/<model>/
+is written only with TG_RESULTS_DIR=results/<model>.
 """
 
 import argparse

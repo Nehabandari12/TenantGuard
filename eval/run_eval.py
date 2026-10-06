@@ -33,7 +33,8 @@ import httpx
 
 from app import config
 from app.seed import TENANTS, build
-from attacks.run import RESULTS, SERVER_DOWN, STEP_TIMEOUT, State, spawn, stop, token
+from attacks.provenance import environment
+from attacks.run import RESULTS, ROOT, SERVER_DOWN, STEP_TIMEOUT, State, spawn, stop, token
 from tenantguard.db import set_rls
 from tenantguard.tracing import read as read_trace
 
@@ -199,7 +200,10 @@ def main() -> None:
             "p50_ms": statistics.median(alat),
             "errors": len(agent_errors),
         }
-    final_path.write_text(json.dumps({"summary": summary, "rows": all_rows, "agent_rows": all_agent_rows}, indent=2), encoding="utf-8")
+    meta = {"output": final_path.relative_to(ROOT).as_posix() if final_path.is_relative_to(ROOT) else str(final_path),
+            "environment": environment()}
+    final_path.write_text(json.dumps({"summary": summary, "meta": meta, "rows": all_rows, "agent_rows": all_agent_rows}, indent=2),
+                          encoding="utf-8")
     partial_path.unlink(missing_ok=True)
     print(json.dumps(summary, indent=2))
 

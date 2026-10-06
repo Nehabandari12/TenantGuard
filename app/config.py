@@ -62,6 +62,9 @@ OLLAMA_NUM_CTX = int(_env("OLLAMA_NUM_CTX", "8192"))
 # can take many minutes per call, times up to LLM_MAX_TOOL_ROUNDS calls per agent request.
 OLLAMA_NUM_PREDICT = int(_env("OLLAMA_NUM_PREDICT", "2048"))
 OLLAMA_TIMEOUT_SECONDS = float(_env("OLLAMA_TIMEOUT_SECONDS", "600"))
+# Fixed sampling for the app's model and the judge, so repeated runs are comparable.
+OLLAMA_TEMPERATURE = 0
+OLLAMA_SEED = 0
 
 # Embeddings: "auto" uses fastembed bge-small-en-v1.5 if installed, else the hashing embedder.
 EMBEDDER = _env("EMBEDDER", "auto")

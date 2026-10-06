@@ -4,7 +4,7 @@
     python -m attacks.demo --real     # the configured LLM (Qwen through Ollama by default), slower
 
 Runs four checks from attacks/cases.yaml in each mode and prints, for each one, what was asked, what came
-back, and the detector's verdict. Nothing is written to results/.
+back, and the detector's verdict. No results are saved; the server logs go to runs/<model>/.
 """
 
 import json
