@@ -3,6 +3,10 @@
 Tenant isolation for multi-tenant RAG and MCP agent apps, plus a benchmark that measures cross-tenant
 leakage in every output channel, not only in the final answer.
 
+**In short:** with a local Qwen3 4B model, the usual `WHERE tenant_id = …` filter still let another
+company's data through in 58% of attack runs. With TenantGuard, no leak was observed in any of 252 runs
+(84 attacks, 3 times each).
+
 [![CI](https://github.com/Nehabandari12/TenantGuard/actions/workflows/ci.yml/badge.svg)](https://github.com/Nehabandari12/TenantGuard/actions/workflows/ci.yml)
 [![Dependency audit](https://github.com/Nehabandari12/TenantGuard/actions/workflows/audit.yml/badge.svg)](https://github.com/Nehabandari12/TenantGuard/actions/workflows/audit.yml)
 
