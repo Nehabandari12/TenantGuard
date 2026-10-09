@@ -1,47 +1,232 @@
 # TenantGuard
 
-Tenant isolation for multi-tenant RAG and MCP agent apps, plus a benchmark that measures cross-tenant
-leakage in every output channel, not only in the final answer.
-
-**In short:** with a local Qwen3 4B model, the usual `WHERE tenant_id = …` filter still let another
-company's data through in 58% of attack runs. With TenantGuard, no leak was observed in any of 252 runs
-(84 attacks, 3 times each).
+Stops one company's data from reaching another company in a shared LLM app, and measures whether it
+worked.
 
 [![CI](https://github.com/Nehabandari12/TenantGuard/actions/workflows/ci.yml/badge.svg)](https://github.com/Nehabandari12/TenantGuard/actions/workflows/ci.yml)
 [![Dependency audit](https://github.com/Nehabandari12/TenantGuard/actions/workflows/audit.yml/badge.svg)](https://github.com/Nehabandari12/TenantGuard/actions/workflows/audit.yml)
 
-**Status:** a solo research project (2026) on synthetic data. It is not deployed and has not been reviewed
+- **Problem:** in a multi-tenant RAG or agent app, the usual `WHERE tenant_id = …` filter still leaks
+  data through the cache, agent memory, tool calls and logs.
+- **Solution:** an isolation layer that enforces the tenant at every layer, and a benchmark of 84 attacks
+  that looks for leaks in 11 places, not only in the answer.
+- **Result:** on a local Qwen3 4B model, **58%** of attack runs leaked with the usual filter and **0%**
+  with TenantGuard (none of 252 runs).
+
+[Problem](#the-problem) → [Solution](#the-solution) → [Architecture](#architecture) →
+[Implementation](#implementation) → [Results](#results) → [Achievements](#achievements) →
+[Constraints](#constraints-and-limitations) → [Run it yourself](#run-it-yourself)
+
+**Status:** a solo project (2026) on synthetic data. It is not deployed and has not been reviewed
 independently; see [SECURITY.md](SECURITY.md).
+
+## The problem
+
+Many AI products are multi-tenant: one app serves many companies, and they all share the same database,
+cache, agent memory, tool server and model. Each company must only ever see its own data.
+
+The usual fix is a `WHERE tenant_id = …` clause on database queries. That protects the query. In an LLM
+app, data reaches users through many other paths, and the filter covers none of them:
+
+| Path | How it leaks with only the `WHERE` filter |
+|---|---|
+| Semantic cache | a user gets another company's cached answer to a similar question |
+| Agent memory | memory is keyed by username, and every company has an `alice` |
+| Tool calls | the model fills in `tenant_id` itself, so a user or planted text can change it |
+| Requests | a tenant-switch header is trusted |
+| Logs | the log viewer trusts a `?tenant=` parameter and returns other companies' rows |
+| Planted instructions | a support ticket tells the agent to fetch other data or send it out in a link |
+
+Real products have run into these paths: a Redis bug in ChatGPT (2023), prompt injection in Slack AI
+(2024), Asana's MCP server (2025), EchoLeak in Microsoft 365 Copilot (2025) and Supabase MCP (2025).
+Details and sources: [docs/INCIDENTS.md](docs/INCIDENTS.md).
+
+There is a second problem: most LLM evaluations only read the final answer. A model can pull another
+company's documents into its context, pass them to a tool or write them to a log, and still give an
+answer that looks clean.
+
+## The solution
+
+TenantGuard has two parts: an isolation layer, and a benchmark that tries to break it.
+
+### The isolation layer
+
+It follows three rules:
+
+1. **The tenant comes from one place: the verified login token.** Never from the request body, a header
+   or the model's output. Code that reaches the database, cache or memory without a tenant raises an
+   error instead of running unscoped.
+2. **The database is the backstop.** PostgreSQL row-level security (with `FORCE`) filters every query,
+   so a forgotten `WHERE` clause can't leak. CI audits the setup on every push to main and every pull
+   request.
+3. **Agents never hand the user's token to tools.** Each request gets its own 60-second token that only
+   the MCP tool server accepts, and the tools have no tenant argument for the model to fill in.
+
+On top of that, egress checks look at everything that leaves the app (answers, tool calls, links and
+logs): they block other companies' data, strip unapproved links and redact secrets.
+
+### The benchmark
+
+The same app runs in four modes, from no protection to TenantGuard, and faces the same 84 attacks:
+
+| Mode | What protects tenants |
+|---|---|
+| B0 | nothing |
+| B1 | a `WHERE tenant_id = …` filter in app code (the usual fix) |
+| B2 | B1 plus an input prompt-injection filter (a keyword list, or Llama Prompt Guard 2) |
+| B3 | **TenantGuard** |
+
+The attacks cover 6 routes (search, cache, memory, tools, injection and logs), 14 each, mapped to the
+OWASP Top 10 for LLM Applications and for Agentic Applications.
+
+Every record in the test data carries a unique marker called a canary, like `GLBX-4A1F0C`. A leak is a
+canary showing up where its company can't see it, in any of 11 channels: the answer, retrieved context,
+cache reads and writes, memory reads and writes, tool calls, tool results, log rows, notes written to
+another company's tickets, and outgoing links. The detector decodes base64, hex, URL encoding, reversal
+and spacing first, so an encoded leak still counts. Extra rules catch leaks that a model rewords
+([how leaks are scored](docs/DESIGN.md#what-counts-as-a-leak)).
+
+## Architecture
+
+```mermaid
+flowchart TB
+    accTitle: TenantGuard architecture
+    accDescr: A client request with a login JWT passes the identity middleware, which binds the tenant. The endpoints call the LLM, whose output is untrusted, read and write Redis scoped by tenant, query Postgres with the tenant set per transaction under forced row-level security, and call the MCP server with a 60-second token whose audience is that server. The MCP server takes the tenant from the token and queries Postgres the same way.
+    client(["Client"])
+    subgraph app ["FastAPI app"]
+        identity["Identity middleware<br/>verifies the login JWT and<br/>binds the tenant to the request"]
+        endpoints["/ask (RAG), /agent (tool loop), /support/logs<br/>egress checks on answers, tool calls and logs"]
+    end
+    llm["LLM: qwen3:4b or mock<br/>(output is untrusted)"]
+    redis[("Redis<br/>cache tagged by tenant<br/>memory keyed tenant:user")]
+    pg[("Postgres + pgvector<br/>FORCE RLS, role tg_app")]
+    mcp["MCP server<br/>tenant from token only"]
+
+    client -- "request + login JWT" --> identity
+    identity --> endpoints
+    endpoints <--> llm
+    endpoints -- "scoped by tenant" --> redis
+    endpoints -- "tenant set per transaction" --> pg
+    endpoints -- "60 s token, aud = MCP server" --> mcp
+    mcp -- "tenant set per transaction" --> pg
+```
+
+A request, step by step:
+
+1. The client sends a request with its login token (a JWT).
+2. The identity middleware checks the token's signature, issuer, audience and expiry, and binds the
+   tenant to this request. A header asking for another tenant gets a 403.
+3. The endpoint (`/ask` for RAG, `/agent` for the tool-using agent, or `/support/logs`) reads the cache
+   and memory under that tenant, and queries Postgres in a transaction that sets the tenant first.
+4. For a tool call, the app mints a new 60-second token for the MCP server. The server reads the tenant
+   from that token and nowhere else, and queries Postgres the same way.
+5. Egress checks the answer, tool arguments and log lines before they leave.
+
+The model's output is treated as untrusted at every step. Nothing the model says can change the tenant.
+
+## Implementation
+
+**Stack:** Python 3.12, FastAPI, PostgreSQL 17 with pgvector, Redis 8 with RedisVL, the MCP Python SDK,
+fastembed (bge-small) for embeddings, Presidio for PII in logs, Ollama for the local model, Docker Compose
+and GitHub Actions.
+
+| Layer | What it enforces | Code | Evidence |
+|---|---|---|---|
+| Identity | the tenant comes only from a verified login JWT (algorithm, signature, issuer, audience, expiry); a header naming another tenant gets 403 | [identity.py](tenantguard/identity.py) | [test_boundaries.py](tests/test_boundaries.py) |
+| Database | `FORCE ROW LEVEL SECURITY`, a fail-closed policy, the tenant set per transaction, and a refusal to run as a role that bypasses RLS | [db.py](tenantguard/db.py), [001_init.sql](sql/001_init.sql) | [rls_audit.py](tenantguard/rls_audit.py) runs in CI on a fresh database; [test_rls.py](tests/test_rls.py) breaks policies on purpose and expects the audit to catch it |
+| Cache | a RedisVL semantic cache that always stores and filters by a tenant tag | [cache.py](tenantguard/cache.py) | cache route: 93% → 0% on Qwen (B1 → B3) |
+| Memory | agent memory keyed `tenant:user` from the verified identity | [memory.py](tenantguard/memory.py) | memory route: 79% → 0% on Qwen (B1 → B3) |
+| MCP tools | a new 60-second token per request, valid only for the MCP server and signed with its own key; tools take no tenant argument | [mcp_auth.py](tenantguard/mcp_auth.py) | all 15 direct tool-server calls in Qwen's B3 runs refused with HTTP 401 |
+| Egress | blocks other tenants' canaries after decoding; strips unapproved links; redacts secrets, and PII in logs | [egress.py](tenantguard/egress.py) | [test_guards.py](tests/test_guards.py) |
+| Benchmark | 84 OWASP-mapped attacks, 11 channels scored, 4 modes, run details stored with every new run | [attacks/](attacks/) | [results/](results/) |
+
+The details that needed the most care:
+
+- **The app refuses to connect as a role that skips RLS.** Superusers and `BYPASSRLS` roles ignore
+  row-level security without any error, even with `FORCE`. The app connects as a plain role and checks
+  that at startup.
+- **Fail closed.** If no tenant is set, the database function behind every policy raises an error instead
+  of returning zero rows. The cache and memory do the same.
+- **No tenant carried between requests.** The tenant is set with `set_config(..., true)`, which lasts one
+  transaction, so a pooled connection can't carry it into the next request.
+- **Foreign keys get around RLS.** A note could point at another company's ticket through its foreign key
+  alone, so B3 looks the ticket up through RLS before writing the note.
+- **Refusals are explicit.** A cross-tenant lookup returns "not found or not accessible", never an empty
+  success, so the benchmark can tell a refusal from a broken lookup.
+- **Filtered vector search still returns enough results.** pgvector's iterative scan keeps searching
+  until enough rows pass the RLS filter.
+
+Why each piece is built this way: [docs/DESIGN.md](docs/DESIGN.md).
 
 ## Results
 
-The same app runs in four modes against 84 attack checks (14 on each of 6 routes). A cell is the share of
-runs in which another company's data reached the user: **answers only / all channels**.
+Share of attack runs in which another company's data reached the user, **answers only / all channels**:
 
-| Mode | What protects tenants | Qwen3 4B | Mock model (obeys every instruction) |
-|---|---|---|---|
-| B0 | nothing | 52% / 88% | 87% / 100% |
-| B1 | a `WHERE tenant_id = …` filter in app code, the usual fix | 41% / 58% (3 runs) | 61% / 70% |
-| B2 | B1 + an input prompt-injection filter | 43% / 58% | 61% / 70% |
-| B3 | **TenantGuard** | **0% / 0%** (3 runs) | **0% / 0%** |
+| Mode | Qwen3 4B | Mock model (obeys every instruction) |
+|---|---|---|
+| B0: nothing | 52% / 88% | 87% / 100% |
+| B1: `WHERE tenant_id` filter | 41% / 58% (3 runs) | 61% / 70% |
+| B2: B1 + input filter | 43% / 58% | 61% / 70% |
+| B3: **TenantGuard** | **0% / 0%** (3 runs) | **0% / 0%** |
 
-- **No leaks were observed in B3**: none in the 252 Qwen runs (3 × 84) and none on the mock, also with
-  the egress canary check switched off. Every B3 outcome was an explicit denial or the caller's own data.
-  That is a result on these checks and this synthetic data, not a guarantee.
-- **Answer-only evaluation misses leaks.** 36% of Qwen's B0 checks and 17% of its B1 runs leaked only
-  outside the final answer: through retrieval, tool results, memory, a note in another tenant's ticket,
-  or an outside link.
-- **Input filters didn't help.** Neither B2 filter changed a single result; Llama Prompt Guard 2 flagged
-  none of the 286 inputs the benchmark sends (B2 with Prompt Guard ran on the mock only).
+Normal use, with every mode answering ordinary questions and doing ordinary agent tasks:
 
-Qwen3 4B ran locally through Ollama (temperature 0, seed 0) on 2-4 Oct 2026, on a laptop CPU; B0 and B2
-ran once. All routes, findings, run details and limitations: [docs/BENCHMARK.md](docs/BENCHMARK.md).
-Several checks mirror public incidents (ChatGPT's 2023 cache bug, Slack AI, Asana's MCP server, EchoLeak,
-Supabase MCP): [docs/INCIDENTS.md](docs/INCIDENTS.md).
+- **Answers:** on 51 normal questions per mode, Qwen retrieved the right document in the top 5 every time
+  and was never wrongly blocked. B3's answers were identical to B2's, which has no TenantGuard.
+- **Agent tasks:** 18 per mode. Reading a ticket and adding a note worked every time, in every mode.
+- **Speed:** TenantGuard adds about 25 ms at p50 to `/ask` (105 vs 81 ms), measured with the mock model
+  so the model itself costs nothing. A re-measurement put most of that on Presidio's log redaction.
 
-## Quickstart
+Qwen3 4B ran locally through Ollama (temperature 0, seed 0) on a laptop CPU, on all 84 attacks, on 2-4 Oct
+2026. B1 and B3 ran three times (252 runs each); B0 and B2 ran once. The mock is deterministic. Per-route
+tables, every finding and how to reproduce them: [docs/BENCHMARK.md](docs/BENCHMARK.md).
 
-The demo runs four of the checks against B0 and then B3 and prints what each user got back. It uses the
+## Achievements
+
+- **Cut leakage from 58% to 0%.** None of the 252 B3 runs on Qwen leaked, and nothing leaked on the
+  worst-case mock either. Every B3 outcome was an explicit refusal (a 403, a tool-server token rejected
+  with HTTP 401, or "not found or not accessible") or the user's own data.
+- **Showed the protection comes from access control.** B3 stayed at 0% with the egress canary check
+  turned off, so it doesn't depend on recognising the markers.
+- **Measured leaks that answer-only evals miss.** 36% of Qwen's unprotected (B0) checks leaked only
+  outside the final answer. Its B0 search answers looked clean, while every one of them had pulled other
+  companies' documents into the model's context.
+- **Showed input filters don't stop these attacks.** Llama Prompt Guard 2 flagged none of the 286 inputs
+  the benchmark sends (highest score 0.18), and neither filter changed a single result. Cross-tenant
+  requests look like normal ones, and planted instructions arrive in tool results, which an input filter
+  never sees.
+- **Kept the product working.** No wrong blocks on normal questions or agent tasks, and about 25 ms of
+  overhead.
+- **Made isolation testable in CI.** A 42-check RLS audit runs on a fresh database on every push to main
+  and every pull request, and tests break the policies on purpose to prove the audit catches it.
+- **Kept the measurement honest.** I found and fixed 20 bugs in the harness and scoring. One was expired
+  login tokens that made three B0 log checks score "no leak": a harness failure producing exactly the
+  number you want to see. Failed steps are now recorded as errors, never as passes. Every result stores
+  the commit it ran on, and a fresh clone reproduced every published mock number exactly.
+  ([All 20 bugs](docs/DESIGN.md#bugs-found-along-the-way))
+
+## Constraints and limitations
+
+- **Synthetic data.** 3 companies, 150 documents, 60 tickets and 84 attacks. Zero observed leaks is
+  evidence about these checks, not proof of isolation.
+- **One small real model, on a laptop CPU.** Qwen3 4B takes about a minute per request, so only B1 and B3
+  were repeated, and normal use was measured on 51 questions and 18 agent tasks per mode. A larger model
+  may behave differently. The mock is the worst case, not a realistic model.
+- **Reworded leaks are undercounted.** Canary matching misses leaks that a model rewords, so Qwen's
+  answers-only rates are lower bounds.
+- **The demo login is not production authentication.** It uses unsalted SHA-256 passwords and a shared
+  HS256 key, with no rate limiting, revocation or TLS.
+- **B0-B2 are vulnerable on purpose.** They exist to be attacked; see [Safe configuration](#safe-configuration).
+- **Latency was measured on one laptop with the mock model.** With a real model on CPU, a request takes
+  about a minute.
+- **No paid APIs.** Everything ran locally. The paid provider refuses to start unless it is explicitly
+  enabled.
+
+The full list is in [docs/BENCHMARK.md](docs/BENCHMARK.md#limitations).
+
+## Run it yourself
+
+The demo runs four of the attacks against B0 and then B3 and prints what each user got back. It uses the
 mock model and a lexical embedder, so it needs no API key and downloads no model: only two Docker images
 and the Python packages. You need Docker and [uv](https://docs.astral.sh/uv/), which fetches Python 3.12
 if it is missing.
@@ -98,72 +283,7 @@ the Docker and the Python commands: `$env:TG_PG_PORT = "45432"` or `export TG_PG
 `powershell -ExecutionPolicy Bypass -File scripts\setup.ps1` on Windows, `bash scripts/setup.sh` on
 macOS/Linux. To reproduce the benchmark, see [docs/BENCHMARK.md](docs/BENCHMARK.md#reproducing).
 
-## What TenantGuard does
-
-| Layer | What it enforces | Code | Evidence |
-|---|---|---|---|
-| Identity | the tenant comes only from a verified login JWT (algorithm, signature, issuer, audience, expiry); a header naming another tenant gets 403 | [identity.py](tenantguard/identity.py) | [test_boundaries.py](tests/test_boundaries.py) |
-| Postgres | `FORCE ROW LEVEL SECURITY`, a fail-closed policy, the tenant set per transaction, and a refusal to run as a role that bypasses RLS | [db.py](tenantguard/db.py), [001_init.sql](sql/001_init.sql) | [rls_audit.py](tenantguard/rls_audit.py) runs in CI on a fresh database; [test_rls.py](tests/test_rls.py) breaks policies on purpose and expects the audit to catch it |
-| Cache | a RedisVL semantic cache that always stores and filters a tenant tag | [cache.py](tenantguard/cache.py) | cache route: 93% → 0% on Qwen (B1 → B3) |
-| Memory | agent memory namespaced `tenant:user` from the verified identity | [memory.py](tenantguard/memory.py) | memory route: 79% → 0% on Qwen (B1 → B3) |
-| MCP | a new 60-second token per request, audience = the MCP server, its own signing key; tools take no tenant argument | [mcp_auth.py](tenantguard/mcp_auth.py) | all 15 direct tool-server calls in Qwen's B3 runs refused with HTTP 401 |
-| Egress | blocks other tenants' canaries after decoding base64, hex, URL encoding, reversal and spacing; strips unapproved links; redacts secrets, and PII in logs | [egress.py](tenantguard/egress.py) | [test_guards.py](tests/test_guards.py) |
-| Benchmark | 84 OWASP-mapped checks, 11 output channels scored, 4 modes, provenance stored with every new run | [attacks/](attacks/) | [results/](results/) |
-
-## Architecture
-
-```mermaid
-flowchart TB
-    accTitle: TenantGuard architecture
-    accDescr: A client request with a login JWT passes the identity middleware, which binds the tenant. The endpoints call the LLM, whose output is untrusted, read and write Redis scoped by tenant, query Postgres with the tenant set per transaction under forced row-level security, and call the MCP server with a 60-second token whose audience is that server. The MCP server takes the tenant from the token and queries Postgres the same way.
-    client(["Client"])
-    subgraph app ["FastAPI app"]
-        identity["Identity middleware<br/>verifies the login JWT and<br/>binds the tenant to the request"]
-        endpoints["/ask (RAG), /agent (tool loop), /support/logs<br/>egress checks on answers, tool calls and logs"]
-    end
-    llm["LLM: qwen3:4b or mock<br/>(output is untrusted)"]
-    redis[("Redis<br/>cache tagged by tenant<br/>memory keyed tenant:user")]
-    pg[("Postgres + pgvector<br/>FORCE RLS, role tg_app")]
-    mcp["MCP server<br/>tenant from token only"]
-
-    client -- "request + login JWT" --> identity
-    identity --> endpoints
-    endpoints <--> llm
-    endpoints -- "scoped by tenant" --> redis
-    endpoints -- "tenant set per transaction" --> pg
-    endpoints -- "60 s token, aud = MCP server" --> mcp
-    mcp -- "tenant set per transaction" --> pg
-```
-
-Three decisions carry most of the weight:
-
-1. **The tenant has one source.** It comes from the verified login token and is held in a request-scoped
-   context. Request bodies, a tenant-switch header and model output can't set it, and a call that reaches
-   the cache, memory or database without it raises instead of running unscoped.
-2. **Row-level security is the backstop, and it is audited.** The app connects as a plain role (not owner,
-   not superuser, no `BYPASSRLS`) and sets the tenant with `set_config(..., true)` inside each transaction,
-   so a pooled connection can't carry one tenant's setting into another's request and a forgotten `WHERE`
-   clause can't leak. CI builds a fresh database and audits the policies, roles, views and functions.
-3. **Agents never forward the user's token.** Each agent request gets its own short-lived token for the
-   MCP server alone, and the tools have no tenant argument for a model, or text planted in a ticket, to
-   change.
-
-Why each piece is built this way, how leaks are scored and the bugs found along the way:
-[docs/DESIGN.md](docs/DESIGN.md).
-
-## Modes and configuration
-
-B0-B2 are **deliberately vulnerable baselines** that exist to be attacked. `app/config.py` defaults to B0
-because the benchmark harness sets the mode itself, and every key and password in the repository is a
-public demo value. `docker-compose.yml` binds Postgres and Redis to `127.0.0.1` only.
-
-To start the app outside the benchmark, set `TG_ENV=protected`. The app and the MCP server then refuse to
-start unless the mode is B3, the signing keys are real and distinct, and the database password is not the
-published one. That removes the known-unsafe settings; the demo login is still not production
-authentication. Details are in [SECURITY.md](SECURITY.md), and every setting is in
-[.env.example](.env.example). The app reads environment variables; only `docker compose` reads a `.env` file.
-
-## Verification
+### Check the claims
 
 Run on 6 Oct 2026 from a fresh clone with the pinned dependencies:
 
@@ -176,24 +296,22 @@ Run on 6 Oct 2026 from a fresh clone with the pinned dependencies:
 | Mock benchmark | `python -m attacks.bench` (see [BENCHMARK.md](docs/BENCHMARK.md#reproducing)) | every published mock leak rate reproduced exactly (Prompt Guard 2 not re-run) |
 | Dependency audit | `pip-audit -r constraints.txt` | no known vulnerabilities apart from 3 documented exceptions ([SECURITY.md](SECURITY.md#dependencies)) |
 
-CI runs the unit tests and the RLS audit on every push to main and every pull request; the dependency audit also runs
-weekly. New benchmark runs go to `runs/<model>/` and record the commit, package versions, model digest,
-embedder, data seed and machine. The published `results/` change only when `TG_RESULTS_DIR` names them.
+CI runs the unit tests and the RLS audit on every push to main and every pull request; the dependency
+audit also runs weekly. New benchmark runs go to `runs/<model>/` and record the commit, package versions,
+model digest, embedder, data seed and machine. The published `results/` change only when `TG_RESULTS_DIR`
+names them.
 
-## Limitations
+### Safe configuration
 
-- Synthetic data, three tenants and 84 checks. Zero observed leaks is evidence about these checks, not a
-  proof of isolation.
-- The mock is an upper bound on model misbehaviour. Qwen3 4B is one small model, and only its B1 and B3
-  runs were repeated.
-- Canary matching undercounts leaks that a model paraphrases, so Qwen's answers-only rates are lower bounds.
-- The demo login is not production authentication: unsalted SHA-256 passwords, a shared HS256 key, and no
-  rate limiting, revocation or TLS.
-- Latency was measured on one laptop with the mock model. B3 added about 25 ms at p50 to `/ask` (105 vs
-  81 ms), and a re-measurement attributed most of that to Presidio's log redaction (3 ms without it). With
-  a real model on CPU, a request takes about a minute.
+B0-B2 are **deliberately vulnerable baselines** that exist to be attacked. `app/config.py` defaults to B0
+because the benchmark harness sets the mode itself, and every key and password in the repository is a
+public demo value. `docker-compose.yml` binds Postgres and Redis to `127.0.0.1` only.
 
-The full list is in [docs/BENCHMARK.md](docs/BENCHMARK.md#limitations).
+To start the app outside the benchmark, set `TG_ENV=protected`. The app and the MCP server then refuse to
+start unless the mode is B3, the signing keys are real and distinct, and the database password is not the
+published one. That removes the known-unsafe settings; the demo login is still not production
+authentication. Details are in [SECURITY.md](SECURITY.md), and every setting is in
+[.env.example](.env.example). The app reads environment variables; only `docker compose` reads a `.env` file.
 
 ## Roadmap
 
@@ -208,9 +326,10 @@ The full list is in [docs/BENCHMARK.md](docs/BENCHMARK.md#limitations).
 | [app/](app/) | the target multi-tenant app (FastAPI): RAG, agent, logs, seed data |
 | [tenantguard/](tenantguard/) | the isolation layer and the RLS audit |
 | [mcp_server/](mcp_server/) | the MCP tool server (search, tickets, notes) |
-| [attacks/](attacks/) | the checks, the runner, the leak detector, the demo |
+| [attacks/](attacks/) | the attacks, the runner, the leak detector, the demo |
 | [eval/](eval/), [baselines/](baselines/) | the normal-use evaluation; B2's input filters |
 | [results/](results/) | the published runs |
+| [docs/](docs/) | design notes, full benchmark results, public incidents |
 
 ## Credits
 
