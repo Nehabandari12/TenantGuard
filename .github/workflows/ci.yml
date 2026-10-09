@@ -13,8 +13,8 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: Install
-        run: pip install -e ".[dev]"
+      - name: Install (pinned)
+        run: pip install -e ".[dev]" -c constraints.txt
       - name: Unit tests
         run: pytest -q
 
@@ -48,8 +48,8 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: Install
-        run: pip install -e ".[dev]"
+      - name: Install (pinned)
+        run: pip install -e ".[dev]" -c constraints.txt
       - name: Create roles, schema and policies
         run: psql -v ON_ERROR_STOP=1 -h localhost -p 55432 -U postgres -d tenantguard -f sql/001_init.sql
         env:

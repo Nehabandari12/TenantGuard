@@ -1,0 +1,8 @@
+# Python pins in constraints.txt are refreshed by hand (see SECURITY.md), because they record the
+# environment behind the published results. Workflow actions are safe to bump automatically.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

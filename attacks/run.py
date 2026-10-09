@@ -6,7 +6,8 @@
 
 Per mode: toggle RLS (owner), start app + MCP with GUARD_MODE, verify every tenant can retrieve
 its own canary (otherwise a 0% proves nothing), then for each case x repeats: reset state, run
-setup steps, run the scored steps, collect every channel, detect, save results/<mode>.json.
+setup steps, run the scored steps, collect every channel, detect, save <mode>.json in the results folder
+(runs/<model>/ unless TG_RESULTS_DIR says otherwise), with the code, packages and model that produced it.
 """
 
 import argparse
@@ -33,13 +34,17 @@ from mcp.client.streamable_http import streamable_http_client
 from app import config
 from app.seed import DEMO_PASSWORD
 from attacks.detector import Registry, detect
+from attacks.provenance import environment
 from tenantguard.db import set_rls
 from tenantguard.tracing import read as read_trace
 
 ROOT = Path(__file__).resolve().parents[1]
 # One folder per model, so mock and real-model runs never overwrite each other.
 LLM_TAG = "mock" if config.LLM_PROVIDER == "mock" else re.sub(r"[^A-Za-z0-9.]+", "-", config.LLM_MODEL).strip("-")
-RESULTS = ROOT / "results" / LLM_TAG
+# The published reference results in results/<model>/ are rewritten only when TG_RESULTS_DIR names them on
+# purpose. Every other run goes to runs/<model>/ (git-ignored), so trying the benchmark can't overwrite them.
+_out = Path(os.environ.get("TG_RESULTS_DIR") or Path("runs") / LLM_TAG)
+RESULTS = _out if _out.is_absolute() else ROOT / _out
 
 
 # ---------------------------------------------------------------- services
@@ -68,7 +73,7 @@ def spawn(mode: str, egress_canary: bool) -> list[subprocess.Popen]:
             pass
         time.sleep(1)
     stop(procs)
-    raise SystemExit("services did not start; see results/server_*.log")
+    raise SystemExit(f"services did not start; see {RESULTS / 'server_*.log'}")
 
 
 def stop(procs: list[subprocess.Popen]) -> None:
@@ -434,7 +439,9 @@ def main() -> None:
     health = {"mode": args.mode, "llm": config.LLM_PROVIDER, "llm_model": config.LLM_MODEL if config.LLM_PROVIDER != "mock" else None,
               "commits": sorted({r.get("commit") or "unrecorded" for r in records}), "reruns": reruns,
               "egress_canary": not args.no_egress_canary, "repeats": repeats,
-              "firewall": args.firewall if args.mode == "B2" else None}
+              "firewall": args.firewall if args.mode == "B2" else None,
+              "output": final_path.relative_to(ROOT).as_posix() if final_path.is_relative_to(ROOT) else str(final_path),
+              "environment": environment()}
     out = {"meta": health, "summary": summary, "records": records}
     final_path.write_text(json.dumps(out, indent=2), encoding="utf-8")
     partial_path.unlink(missing_ok=True)

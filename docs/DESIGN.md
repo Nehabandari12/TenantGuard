@@ -1,7 +1,7 @@
 # Design notes
 
 Why TenantGuard is built the way it is, what broke while building it, and where the ideas came from.
-Setup and headline results are in the [README](../README.md).
+Setup and headline results are in the [README](../README.md); full tables and findings in [BENCHMARK.md](BENCHMARK.md).
 
 ## Threat model
 

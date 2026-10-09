@@ -14,14 +14,14 @@ if (-not $SkipServices) {
     Need docker "Install Docker Desktop and start it."
     Step "Starting Postgres and Redis"
     docker compose up -d
-    if ($LASTEXITCODE -ne 0) { throw "docker compose failed. If port 55432 is reserved by Windows, run 'net stop winnat' and 'net start winnat' as administrator." }
+    if ($LASTEXITCODE -ne 0) { throw "docker compose failed. If Windows reserves port 55432 (netsh interface ipv4 show excludedportrange protocol=tcp), set `$env:TG_PG_PORT to a free port such as 45432 and run this again." }
     $deadline = (Get-Date).AddMinutes(2)
     do { Start-Sleep 2; $health = docker compose ps --format "{{.Health}}" } until ((@($health) -notcontains "starting") -or (Get-Date) -gt $deadline)
 }
 
 Step "Python environment"
 if (-not (Test-Path .venv)) { uv venv --python 3.12 .venv }
-uv pip install --python .venv\Scripts\python.exe -e ".[embed,pii,dev]"
+uv pip install --python .venv\Scripts\python.exe -e ".[embed,pii,dev]" -c constraints.txt
 .venv\Scripts\python.exe -m spacy download en_core_web_sm
 
 Step "Seeding 3 companies (150 documents, 60 tickets, 222 canaries)"

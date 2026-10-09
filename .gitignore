@@ -6,6 +6,8 @@ __pycache__/
 .env
 # Cloned third-party repos used for study; see docs/DESIGN.md for licenses and what was reused.
 references/
+# New benchmark runs (attacks/run.py writes here unless TG_RESULTS_DIR names results/<model>/)
+runs/
 # Benchmark run artifacts: server logs, progress logs, unfinished and discarded runs
 results/**/server_*.log
 results/**/progress.log
